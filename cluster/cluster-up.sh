@@ -4,9 +4,9 @@ set -euo pipefail
 CLUSTER_NAME="${CLUSTER_NAME:-ldp}"
 KIND_CFG="${KIND_CFG:-cluster/cluster-config.yaml}"
 ARGOCD_NS="${ARGOCD_NS:-orchestration}"
+ARGOCD_CHART_DIR="${CHART_DIR:-bootstrap/argocd}"
 ARGOCD_RELEASE="${ARGOCD_RELEASE:-argocd}"
-ARGOCD_CHART_VERSION="${ARGOCD_CHART_VERSION:-7.7.2}"
-ARGOCD_VALUES_FILE="${ARGOCD_VALUES_FILE:-bootstrap/argocd/values.yaml}"
+
 
 # Detect container engine: prefer docker, fallback podman
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
@@ -35,17 +35,12 @@ fi
 
 # Install Argo CD
 echo "▶ Installing Argo CD..."
-helm repo add argo https://argoproj.github.io/argo-helm >/dev/null 2>&1 || true
-helm repo update argo >/dev/null 2>&1
-
-helm upgrade --install "${ARGOCD_RELEASE}" argo/argo-cd \
-    --namespace "${ARGOCD_NS}" \
-    --create-namespace \
-    -f "${ARGOCD_VALUES_FILE}" \
-    --version "${ARGOCD_CHART_VERSION}" \
-    --wait \
-    --timeout=5m \
-    >/dev/null 2>&1
+cd "${ARGOCD_CHART_DIR}" && helm dependency update >/dev/null 2>&1 && \
+helm upgrade --install "${ARGOCD_RELEASE}" . \
+  --namespace "${ARGOCD_NS}" \
+  --create-namespace \
+  --wait \
+  --timeout=5m \
 
 echo "✅ Argo CD installed"
 
