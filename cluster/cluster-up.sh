@@ -4,7 +4,7 @@ set -euo pipefail
 CLUSTER_NAME="${CLUSTER_NAME:-ldp}"
 KIND_CFG="${KIND_CFG:-cluster/cluster-config.yaml}"
 ARGOCD_NS="${ARGOCD_NS:-orchestration}"
-ARGOCD_CHART_DIR="${CHART_DIR:-bootstrap/argocd}"
+ARGOCD_CHART_DIR="${CHART_DIR:-platform-apps/orchestration/argocd}"
 ARGOCD_RELEASE="${ARGOCD_RELEASE:-argocd}"
 
 
