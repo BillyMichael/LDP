@@ -63,7 +63,7 @@ fi
 
 echo ""
 echo "🌐 Access Argo CD:"
-echo "   kubectl port-forward -n argocd svc/argocd-server 8080:80"
+echo "   kubectl port-forward -n orchestration svc/argocd-server 8080:80"
 echo "   Then visit: http://localhost:8080"
 echo ""
 echo "💡 Useful commands:"

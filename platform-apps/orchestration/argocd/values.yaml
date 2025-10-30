@@ -1,19 +1,20 @@
-server:
-  insecure: true
-  ingress:
+argo-cd:
+  server:
+    insecure: true
+    ingress:
+      enabled: false
+
+  controller:
+    metrics:
+      enabled: true
+  serverMetrics:
+    enabled: true
+  repoServer:
+    metrics:
+      enabled: true
+  applicationSet:
+    metrics:
+      enabled: true
+
+  dex:
     enabled: false
-
-controller:
-  metrics:
-    enabled: true
-serverMetrics:
-  enabled: true
-repoServer:
-  metrics:
-    enabled: true
-applicationSet:
-  metrics:
-    enabled: true
-
-dex:
-  enabled: false
