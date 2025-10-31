@@ -1,3 +1,5 @@
 gitea:
-  podDisruptionBudget:
-    minAvailable: 1
+  postgresql-ha:
+    enabled: false
+  postgresql:
+    enabled: true
