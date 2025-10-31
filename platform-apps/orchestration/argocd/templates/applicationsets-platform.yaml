@@ -2,9 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: platform-apps
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "1"
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]

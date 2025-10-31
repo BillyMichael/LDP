@@ -6,7 +6,7 @@ KIND_CFG="${KIND_CFG:-cluster/cluster-config.yaml}"
 ARGOCD_NS="${ARGOCD_NS:-orchestration}"
 ARGOCD_CHART_DIR="${CHART_DIR:-platform-apps/orchestration/argocd}"
 ARGOCD_RELEASE="${ARGOCD_RELEASE:-argocd}"
-
+APPSET_FILE="${APPSET_FILE:-${ARGOCD_CHART_DIR}/templates/applicationsets-platform.yaml}"
 
 # Detect container engine: prefer docker, fallback podman
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
@@ -34,15 +34,30 @@ else
 fi
 
 # Install Argo CD
+# Add Argo CD Helm repository
+echo "▶ Adding Argo CD Helm repository..."
+helm repo add argo https://argoproj.github.io/argo-helm >/dev/null 2>&1 || true
+helm repo update >/dev/null 2>&1
+
+# Install Argo CD
 echo "▶ Installing Argo CD..."
-cd "${ARGOCD_CHART_DIR}" && helm dependency update >/dev/null 2>&1 && \
-helm upgrade --install "${ARGOCD_RELEASE}" . \
+helm upgrade --install "${ARGOCD_RELEASE}" argo/argo-cd \
   --namespace "${ARGOCD_NS}" \
   --create-namespace \
   --wait \
   --timeout=5m \
+  >/dev/null 2>&1
 
 echo "✅ Argo CD installed"
+
+echo "▶ Migrate to our Argo CD chart now CRDs are installed..."
+helm upgrade --install "${ARGOCD_RELEASE}" ./platform-apps/orchestration/argocd \
+  --namespace "${ARGOCD_NS}" \
+  --wait \
+  --timeout=5m \
+  >/dev/null 2>&1
+
+echo "✅ Argo CD Migration complete"
 
 # Display Access Information 
 echo ""
