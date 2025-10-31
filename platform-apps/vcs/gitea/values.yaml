@@ -1,4 +1,3 @@
 gitea:
   podDisruptionBudget:
-    maxUnavailable: 1
     minAvailable: 1
