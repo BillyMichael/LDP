@@ -29,7 +29,7 @@ if kind get clusters 2>/dev/null | grep -qx "${CLUSTER_NAME}"; then
   echo "→ Cluster '${CLUSTER_NAME}' already exists"
 else
   echo "▶ Creating cluster '${CLUSTER_NAME}'..."
-  kind create cluster --name "${CLUSTER_NAME}" --config "${KIND_CFG}" --quiet
+  kind create cluster --name "${CLUSTER_NAME}" --config "${KIND_CFG}" 
   echo "✅ Cluster created"
 fi
 
@@ -44,9 +44,9 @@ echo "▶ Installing Argo CD..."
 helm upgrade --install "${ARGOCD_RELEASE}" argo/argo-cd \
   --namespace "${ARGOCD_NS}" \
   --create-namespace \
+  --set server.ingress.enabled=false \
   --wait \
-  --timeout=5m \
-  >/dev/null 2>&1
+  --timeout=5m
 
 echo "✅ Argo CD installed"
 
@@ -80,6 +80,23 @@ echo ""
 echo "🌐 Access Argo CD:"
 echo "   kubectl port-forward -n orchestration svc/argocd-server 8080:80"
 echo "   Then visit: http://localhost:8080"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "🔐 Authelia Users:"
+echo "   Admin:"
+echo "      Username: admin"
+echo "      Password: admin"
+echo ""
+echo "   Platform Maintainer:"
+echo "      Username: platformMaintainer"
+echo "      Password: maintainer"
+echo ""
+echo "   Platform User:"
+echo "      Username: platformUser"
+echo "      Password: user"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "💡 Useful commands:"
 echo "   make down      - Delete cluster"

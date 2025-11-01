@@ -3,3 +3,8 @@ gitea:
     enabled: false
   postgresql:
     enabled: true
+  gitea:
+    config:
+      server:
+        ROOT_URL: http://gitea.local
+        DOMAIN: gitea.local

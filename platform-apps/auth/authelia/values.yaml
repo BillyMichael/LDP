@@ -1,0 +1,19 @@
+authelia:
+  configMap:
+    authentication_backend:
+      file:
+        path: /config/users_database.yml
+        password:
+          algorithm: argon2id
+          iterations: 1
+          salt_length: 16
+          parallelism: 8
+          memory: 1024
+    
+  persistence:
+    config:
+      enabled: true
+      type: configMap
+      name: authelia-users
+      mountPath: /config/users_database.yml
+      subPath: users_database.yml

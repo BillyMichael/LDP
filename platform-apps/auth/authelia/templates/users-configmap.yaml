@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authelia-users
+  namespace: {{ .Release.Namespace }}
+data:
+  users_database.yml: |
+    users:
+      admin:
+        displayname: "Admin User"
+        password: "$argon2id$v=19$m=1024,t=1,p=8$c2FsdHNhbHRzYWx0$qOFfuTf7QV1L5/1n4a9t4A"
+        email: "admin@example.com"
+        groups:
+          - admins
+          - dev
+      platformMaintainer:
+        displayname: "Platform Maintainer"
+        password: "$argon2id$v=19$m=1024,t=1,p=8$bWFpbnRhaW5lcnNhbHQ$7RjvEqGq1Y3h/5vW8sNk7Q"
+        email: "maintainer@example.com"
+        groups:
+          - maintainers
+          - dev
+      platformUser:
+        displayname: "Platform User"
+        password: "$argon2id$v=19$m=1024,t=1,p=8$dXNlcnNhbHR1c2Vyc2FsdA$8XvRzK4pLm9j/2wX3tOl8R"
+        email: "user@example.com"
+        groups:
+          - users
