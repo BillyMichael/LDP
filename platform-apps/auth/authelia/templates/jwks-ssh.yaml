@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jwk-rsa
+spec:
+  dnsNames: [ auth.172.19.115.102.nip.io ]
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: selfsigned
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS8
+    size: 2048
+  secretName: jwk-rsa
+  usages:
+    - digital signature
+    - key encipherment

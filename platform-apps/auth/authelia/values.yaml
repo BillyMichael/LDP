@@ -1,0 +1,151 @@
+authelia:
+  ingress:
+    enabled: true
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      cert-manager.io/cluster-issuer: selfsigned
+    tls:
+      enabled: true
+  configMap:
+    theme: dark 
+    log:
+      level: trace
+
+    ntp:
+      disable_startup_check: true
+      disable_failure: true
+
+    authentication_backend:
+      refresh_interval: '1m'
+      ldap:
+        enabled: true
+        implementation: 'lldap'
+        address: 'ldap://lldap-chart-service:3890'
+        base_dn: 'DC=ldp,DC=com'
+        additional_users_dn: 'OU=people'
+        additional_groups_dn: 'OU=groups'
+        groups_filter: '(member={dn})'
+        user: 'UID=svc_authelia,OU=people,DC=ldp,DC=com'
+        password:
+          secret_name: 'lldap-authelia-credentials'
+          path: 'password'
+      password_reset:
+        disable: false
+      password_change:
+        disable: false
+
+    
+    # Add access_control rules
+    access_control:
+      default_policy: deny
+      rules:
+        - domain: "*"
+          policy: one_factor
+    
+    # Fixed storage configuration
+    storage:
+      local:
+        enabled: true
+        path: '/config/db.sqlite3'
+
+    # Fixed notifier configuration
+    notifier:
+      disable_startup_check: false
+      filesystem:
+        enabled: true
+    
+    # Session configuration (without secret)
+    session:
+      cookies:
+        - name: authelia_session
+          domain: 172.19.115.102.nip.io
+          subdomain: auth
+          authelia_url: https://auth.172.19.115.102.nip.io
+          same_site: lax
+          secure: true
+          expiration: 1h
+          inactivity: 5m
+          remember_me: 1M
+    
+    identity_providers:
+      oidc:
+        enabled: true
+        jwks:
+          - key_id: default
+            algorithm: RS256
+            use: sig
+            key: 
+              path: /secrets/jwk-rsa/tls.key 
+            certificate_chain: 
+              path: /secrets/jwk-rsa/tls.crt
+        lifespans:
+          access_token: '1h'
+          authorize_code: '1m'
+          id_token: '1h'
+          refresh_token: '90m'
+        cors:
+          endpoints:
+            - 'authorization'
+            - 'token'
+            - 'revocation'
+            - 'introspection'
+          allowed_origins: 
+            - "*"
+        enable_client_debug_messages: true
+        clients:
+          - client_id: 'argocd'
+            client_name: 'Argo CD'
+            client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
+            public: false
+            authorization_policy: 'one_factor'
+            require_pkce: false
+            consent: implicit
+            pkce_challenge_method: ''
+            redirect_uris:
+              - 'https://cd.172.19.115.102.nip.io/auth/callback'
+            scopes:
+              - 'openid'
+              - 'groups'
+              - 'email'
+              - 'code'
+            grant_types:
+              - 'authorization_code'
+            access_token_signed_response_alg: 'none'
+            userinfo_signed_response_alg: 'none'
+            token_endpoint_auth_method: 'client_secret_basic'
+          - client_id: 'argocd-cli'
+            client_name: 'Argo CD (CLI)'
+            public: true
+            authorization_policy: 'one_factor'
+            require_pkce: true
+            consent: implicit
+            pkce_challenge_method: 'S256'
+            redirect_uris:
+              - 'https://cd.172.19.115.102.nip.io/auth/callback'
+            scopes:
+              - 'openid'
+              - 'offline_access'
+              - 'groups'
+              - 'email'
+            response_types:
+              - 'code'
+            grant_types:
+              - 'authorization_code'
+              - 'refresh_token'
+            access_token_signed_response_alg: 'none'
+            userinfo_signed_response_alg: 'none'
+            token_endpoint_auth_method: 'none'
+            
+  pod:
+    kind: Deployment
+
+  secret:
+    additionalSecrets:
+      lldap-authelia-credentials: {}
+      jwk-rsa:
+        items:
+          - key: tls.key
+            path: tls.key 
+          - key: tls.crt
+            path: tls.crt 
+      

@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: platform-apps
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/BillyMichael/LDP.git
+        revision: HEAD
+        files:
+          - path: "platform-apps/**/values.yaml"
+  template:
+    metadata:
+      # Escape for Helm, will be processed by ArgoCD
+      name: '{{ `{{ index .path.segments 2 }}` }}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/BillyMichael/LDP.git
+        targetRevision: HEAD
+        path: '{{ `{{ .path.path }}` }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ `{{ index .path.segments 1 }}` }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

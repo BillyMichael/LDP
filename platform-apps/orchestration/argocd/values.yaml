@@ -1,0 +1,74 @@
+argo-cd:
+  server:
+    insecure: true
+    ingress:
+      enabled: true
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        cert-manager.io/cluster-issuer: selfsigned
+      hostname: cd.172.19.115.102.nip.io
+      tls: true
+
+  global:
+    domain: cd.172.19.115.102.nip.io
+
+  controller:
+    metrics:
+      enabled: true
+  serverMetrics:
+    enabled: true
+  repoServer:
+    metrics:
+      enabled: true
+  applicationSet:
+    metrics:
+      enabled: true
+
+  dex:
+    enabled: false
+  configs:
+    params:
+      server.insecure: 'true'
+    cm:
+      url: https://cd.172.19.115.102.nip.io
+      create: true
+      oidc.tls.insecure.skip.verify: 'true'
+      resource.customizations.health.networking.k8s.io_Ingress: |
+        hs = {}
+        hs.status = "Healthy"
+        return hs
+      oidc.config: |
+        name: 'Authelia'
+        issuer: 'https://auth.172.19.115.102.nip.io'
+        clientID: 'argocd'
+        clientSecret: 'insecure_secret'
+        cliClientID: 'argocd-cli'
+        requestedScopes:
+          - 'openid'
+          - 'email'
+          - 'groups'
+        enableUserInfoGroups: true
+        userInfoPath: '/api/oidc/userinfo'
+    rbac:
+      policy.default: 'role:readonly'
+      policy.csv: |
+        # Map LDAP groups to ArgoCD roles
+        g, admin, role:admin
+
+        # Custom maintainer role with deploy/sync but no delete permissions
+        p, role:maintainer, applications, get, */*, allow
+        p, role:maintainer, applications, create, */*, allow
+        p, role:maintainer, applications, update, */*, allow
+        p, role:maintainer, applications, sync, */*, allow
+        p, role:maintainer, applications, override, */*, allow
+        p, role:maintainer, repositories, get, *, allow
+        p, role:maintainer, repositories, create, *, allow
+        p, role:maintainer, repositories, update, *, allow
+        p, role:maintainer, clusters, get, *, allow
+        p, role:maintainer, projects, get, *, allow
+        p, role:maintainer, logs, get, */*, allow
+        p, role:maintainer, exec, create, */*, deny
+
+        # Map maintainer group to maintainer role
+        g, maintainer, role:maintainer
+       

@@ -1,0 +1,8 @@
+cloudnative-pg:
+  crds:
+    create: true
+  serviceAccount:
+    create: true
+    name: cloudnative-pg
+  commonAnnotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true

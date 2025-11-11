@@ -1,0 +1,36 @@
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: lldap-authelia-password
+  annotations:
+        argocd.argoproj.io/sync-wave: '-1'
+spec:
+  length: 8
+  noUpper: true
+  symbols: 0
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: lldap-authelia-credentials
+  annotations:
+        argocd.argoproj.io/sync-wave: '-1'
+spec:
+  refreshInterval: 24h
+  refreshPolicy: CreatedOnce
+  target:
+    name: lldap-authelia-credentials
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        id: "svc_authelia"
+        password: '{{`{{ .password }}`}}'
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: lldap-authelia-password

@@ -1,0 +1,17 @@
+external-secrets:
+  installCRDs: true
+
+  crds:
+    annotations:
+      argocd.argoproj.io/sync-options: ServerSideApply=true
+    createClusterExternalSecret: true
+    createClusterSecretStore: true
+    createClusterGenerator: true
+    createClusterPushSecret: true
+    createPushSecret: true
+  
+
+  certController:
+    enabled: false
+
+  

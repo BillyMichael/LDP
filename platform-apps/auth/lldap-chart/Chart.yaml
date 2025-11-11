@@ -1,0 +1,9 @@
+apiVersion: v2
+name: lldap
+description: Light LDAP deployment
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: lldap-chart
+    version: 0.3.5

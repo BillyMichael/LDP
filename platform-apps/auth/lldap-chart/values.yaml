@@ -1,0 +1,9 @@
+lldap-chart:
+  secret:
+    create: false
+    useExisting: true
+    name: lldap-credentials
+  ingress:
+    enabled: false
+  hpa:
+    enabled: false

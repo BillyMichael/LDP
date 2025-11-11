@@ -1,0 +1,36 @@
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: lldap-user-password
+  annotations:
+        argocd.argoproj.io/sync-wave: '-1'
+spec:
+  length: 8
+  noUpper: true
+  symbols: 0
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: lldap-user-credentials
+  annotations:
+        argocd.argoproj.io/sync-wave: '-1'
+spec:
+  refreshInterval: 24h
+  refreshPolicy: CreatedOnce
+  target:
+    name: lldap-user-credentials
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        id: "platform_user"
+        password: '{{`{{ .password }}`}}'
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: lldap-user-password

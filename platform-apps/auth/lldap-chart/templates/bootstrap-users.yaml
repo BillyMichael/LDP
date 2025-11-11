@@ -1,0 +1,85 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: lldap-bootstrap-configs
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: lldap-store
+    kind: SecretStore
+  target:
+    name: lldap-bootstrap-configs
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        user-configs.json: |
+          {
+            "id": "svc_authelia",
+            "email": "svc_authelia@ldp.com",
+            "password": "{{`{{ .authelia_password }}`}}",
+            "displayName": "Authelia Svc Account",
+            "firstName": "Authelia",
+            "lastName": "Svc Account",
+            "groups": [
+              "lldap_password_manager"
+            ]
+          }
+          {
+            "id": "platform_admin",
+            "email": "platform_admin@ldp.com",
+            "password": "{{`{{ .admin_password }}`}}",
+            "displayName": "Platform Admin",
+            "firstName": "Platform",
+            "lastName": "Admin",
+            "groups": [
+              "admin"
+            ]
+          }
+          {
+            "id": "platform_maintainer",
+            "email": "platform_maintainer@ldp.com",
+            "password": "{{`{{ .maintainer_password }}`}}",
+            "displayName": "Platform Maintainer",
+            "firstName": "Platform",
+            "lastName": "Maintainer",
+            "groups": [
+              "maintainer"
+            ]
+          }
+          {
+            "id": "platform_user",
+            "email": "platform_user@ldp.com",
+            "password": "{{`{{ .user_password }}`}}",
+            "displayName": "Platform User",
+            "firstName": "Platform",
+            "lastName": "User"
+          }
+        group-configs.json: |
+          {
+            "name": "admin"
+          }
+          {
+            "name": "maintainer"
+          }
+  data:
+    - secretKey: authelia_password
+      remoteRef:
+        key: lldap-authelia-credentials
+        property: password
+    - secretKey: admin_password
+      remoteRef:
+        key: lldap-admin-credentials
+        property: password
+    - secretKey: maintainer_password
+      remoteRef:
+        key: lldap-maintainer-credentials
+        property: password
+    - secretKey: user_password
+      remoteRef:
+        key: lldap-user-credentials
+        property: password
+    
+    
