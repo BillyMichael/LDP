@@ -8,3 +8,4 @@ backstage:
     host: portal.172.19.115.102.nip.io
     tls:
       enabled: true
+      secretName: backstage-tls
