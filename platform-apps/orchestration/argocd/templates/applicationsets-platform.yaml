@@ -24,7 +24,7 @@ spec:
         helm:
           parameters:
             - name: global.clusterIP
-              value: "{{ .Values.global.clusterIP }}"
+              value: "172.19.115.102"
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ `{{ index .path.segments 1 }}` }}'
