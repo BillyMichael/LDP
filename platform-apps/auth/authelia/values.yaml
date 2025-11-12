@@ -58,9 +58,9 @@ authelia:
     session:
       cookies:
         - name: authelia_session
-          domain: {{ .Values.global.clusterIP }}.nip.io
+          domain: 172.19.115.102.nip.io
           subdomain: auth
-          authelia_url: https://auth.{{ .Values.global.clusterIP }}.nip.io
+          authelia_url: https://auth.172.19.115.102.nip.io
           same_site: lax
           secure: true
           expiration: 1h
@@ -102,7 +102,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: ''
             redirect_uris:
-              - 'https://cd.{{ .Values.global.clusterIP }}.nip.io/auth/callback'
+              - 'https://cd.172.19.115.102.nip.io/auth/callback'
             scopes:
               - 'openid'
               - 'groups'
@@ -121,7 +121,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: 'S256'
             redirect_uris:
-              - 'https://cd.{{ .Values.global.clusterIP }}.nip.io/auth/callback'
+              - 'https://cd.172.19.115.102.nip.io/auth/callback'
             scopes:
               - 'openid'
               - 'offline_access'
