@@ -1,7 +1,9 @@
-ingress:
-  enabled: true
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    cert-manager.io/cluster-issuer: selfsigned
-  tls:
+
+backstage:
+  ingress:
     enabled: true
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      cert-manager.io/cluster-issuer: selfsigned
+    tls:
+      enabled: true
