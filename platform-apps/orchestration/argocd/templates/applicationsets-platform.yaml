@@ -21,6 +21,10 @@ spec:
         repoURL: https://github.com/BillyMichael/LDP.git
         targetRevision: HEAD
         path: '{{ `{{ .path.path }}` }}'
+        helm:
+          parameters:
+            - name: global.clusterIP
+              value: "{{ .Values.global.clusterIP }}"
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ `{{ index .path.segments 1 }}` }}'
