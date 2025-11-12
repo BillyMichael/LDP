@@ -9,6 +9,7 @@ backstage:
     tls:
       enabled: true
       secretName: backstage-tls
-  extraAppConfig:
-   - filename: app-config.extra.yaml
-     configMapRef: extra-app-config
+  backstage:
+    extraAppConfig:
+    - filename: app-config.extra.yaml
+      configMapRef: extra-app-config
