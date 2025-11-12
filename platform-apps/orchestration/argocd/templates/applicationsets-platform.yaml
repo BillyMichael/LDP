@@ -19,7 +19,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BillyMichael/LDP.git
-        targetRevision: HEAD
+        targetRevision: main
         path: '{{ `{{ .path.path }}` }}'
         helm:
           parameters:
