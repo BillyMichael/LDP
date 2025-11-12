@@ -1,0 +1,7 @@
+apiVersion: v2
+name: backstage
+version: 1.0.0
+dependencies:
+  - name: backstage
+    version: 2.6.3
+    repository: https://backstage.github.io/charts
