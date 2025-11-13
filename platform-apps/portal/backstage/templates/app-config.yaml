@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: extra-app-config
 data:
-  app-config.yaml: |
+  app-config.extra.yaml: |
     app:
       title: "GlobalLogic Backstage"
       baseUrl: https://portal.host.docker.internal
