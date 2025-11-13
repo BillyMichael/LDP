@@ -53,8 +53,8 @@ echo "✅ Argo CD installed"
 echo "▶ Migrate to our Argo CD chart now CRDs are installed..."
 helm upgrade --install "${ARGOCD_RELEASE}" ./platform-apps/orchestration/argocd \
   --namespace "${ARGOCD_NS}" \
-  --dependency-update \ 
   --wait \
+  --dependency-update \
   --timeout=5m \
   >/dev/null 2>&1
 
