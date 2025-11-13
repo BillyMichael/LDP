@@ -5,11 +5,11 @@ gitea:
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       cert-manager.io/cluster-issuer: selfsigned
     hosts:
-      - host: vcs.172.19.115.102.nip.io
+      - host: vcs.host.docker.internal
     tls:
       - secretName: gitea-server-tls
         hosts:
-          - vcs.172.19.115.102.nip.io
+          - vcs.host.docker.internal
   valkey-cluster:
     enabled: false
   valkey:

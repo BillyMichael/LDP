@@ -5,7 +5,7 @@ backstage:
     annotations:
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       cert-manager.io/cluster-issuer: selfsigned
-    host: portal.172.19.115.102.nip.io
+    host: portal.host.docker.internal
     tls:
       enabled: true
       secretName: backstage-tls

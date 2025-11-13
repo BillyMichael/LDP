@@ -58,9 +58,9 @@ authelia:
     session:
       cookies:
         - name: authelia_session
-          domain: 172.19.115.102.nip.io
+          domain: host.docker.internal
           subdomain: auth
-          authelia_url: https://auth.172.19.115.102.nip.io
+          authelia_url: https://auth.host.docker.internal
           same_site: lax
           secure: true
           expiration: 1h
@@ -102,7 +102,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: ''
             redirect_uris:
-              - 'https://cd.172.19.115.102.nip.io/auth/callback'
+              - 'https://cd.host.docker.internal/auth/callback'
             scopes:
               - 'openid'
               - 'groups'
@@ -121,7 +121,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: 'S256'
             redirect_uris:
-              - 'https://cd.172.19.115.102.nip.io/auth/callback'
+              - 'https://cd.host.docker.internal/auth/callback'
             scopes:
               - 'openid'
               - 'offline_access'
@@ -141,8 +141,8 @@ authelia:
             public: false
             authorization_policy: one_factor
             redirect_uris:
-              - https://portal.172.19.115.102.nip.io/api/auth/oidc/handler/frame
-              - https://portal.172.19.115.102.nip.io/api/auth/oidc/handler
+              - https://portal.host.docker.internal/api/auth/oidc/handler/frame
+              - https://portal.host.docker.internal/api/auth/oidc/handler
             scopes:
               - openid
               - profile

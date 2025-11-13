@@ -3,7 +3,7 @@ kind: Certificate
 metadata:
   name: jwk-rsa
 spec:
-  dnsNames: [ auth.172.19.115.102.nip.io ]
+  dnsNames: [ auth.host.docker.internal ]
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
