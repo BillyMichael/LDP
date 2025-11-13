@@ -31,3 +31,10 @@ data:
                 - resolver: emailMatchingUserEntityProfileEmail
             tokenEndpointAuthMethod: client_secret_post
             scope: openid profile email
+    
+    techdocs:
+      builder: 'local'
+      generator:
+        runIn: 'local'
+      publisher:
+        type: 'local'
