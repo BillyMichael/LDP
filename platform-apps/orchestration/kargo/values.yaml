@@ -2,7 +2,7 @@ kargo:
   api:
     oidc: 
       enabled: true
-      issuerURL: https://auth.127.0.0.1/realms/gluki
+      issuerURL: https://auth.127.0.0.1.nip.io/realms/gluki
       clientID: kargo
       dex:
         enabled: false
@@ -10,7 +10,7 @@ kargo:
         claims:
           groups:
           - admins
-    host: kargo.127.0.0.1
+    host: kargo.127.0.0.1.nip.io
     adminAccount: 
       enabled: false
     ingress:

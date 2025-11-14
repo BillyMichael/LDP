@@ -6,11 +6,11 @@ argo-cd:
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure
         cert-manager.io/cluster-issuer: selfsigned
-      hostname: cd.127.0.0.1
+      hostname: cd.127.0.0.1.nip.io
       tls: true
 
   global:
-    domain: cd.127.0.0.1
+    domain: cd.127.0.0.1.nip.io
 
   controller:
     metrics:
@@ -30,7 +30,7 @@ argo-cd:
     params:
       server.insecure: 'true'
     cm:
-      url: https://cd.127.0.0.1
+      url: https://cd.127.0.0.1.nip.io
       create: true
       oidc.tls.insecure.skip.verify: 'true'
       resource.customizations.health.networking.k8s.io_Ingress: |
@@ -39,7 +39,7 @@ argo-cd:
         return hs
       oidc.config: |
         name: 'Authelia'
-        issuer: 'https://auth.127.0.0.1'
+        issuer: 'https://auth.127.0.0.1.nip.io'
         clientID: 'argocd'
         clientSecret: 'insecure_secret'
         cliClientID: 'argocd-cli'
