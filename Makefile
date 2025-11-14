@@ -1,27 +1,43 @@
-# Default goal so `make` alone runs the cluster
+# Default goal so `make` runs the cluster
 .DEFAULT_GOAL := up
 
-.PHONY: up down password restart kubeconfig info
+.PHONY: up down password restart kubeconfig info help
 
-# Create the kind cluster
-up:
-	@echo "🚀 Creating kind cluster 'ldp'..."
+
+# ------------------------------------------------------------------------------
+# Cluster Lifecycle
+# ------------------------------------------------------------------------------
+
+up: ## Create the kind cluster
 	@bash cluster/cluster-up.sh
 
-# Delete the kind cluster
-down:
-	@echo "🗑️  Deleting kind cluster 'ldp'..."
-	@kind delete cluster --name ldp || true
+down: ## Delete the kind cluster
+	@bash cluster/cluster-down.sh
 
-password:
-	@kubectl -n argocd get secret argocd-initial-admin-secret \
-		-o jsonpath="{.data.password}" | base64 -d && echo
+restart: ## Restart the cluster
+	@$(MAKE) --no-print-directory down
+	@$(MAKE) --no-print-directory up
 
-restart: down up
 
-kubeconfig:
-	@echo "⚙️  Updating kubeconfig for cluster 'ldp'..."
-	@kind export kubeconfig --name ldp
+# ------------------------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------------------------
 
-info:
+kubeconfig: ## Export updated kubeconfig
+	@kind export kubeconfig --name ldp >/dev/null
+
+info: ## Show Local Development Platform info
 	@bash cluster/show-info.sh
+
+
+# ------------------------------------------------------------------------------
+# Help
+# ------------------------------------------------------------------------------
+
+help: ## Show this help
+	@printf "\nLocal Development Platform Make Commands\n"
+	@printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+	@awk 'BEGIN {FS=":.*##"; printf "Usage: make <target>\n\nAvailable targets:\n"} \
+		/^[a-zA-Z0-9_-]+:.*##/ \
+		{ printf "  %-15s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@printf "\n"

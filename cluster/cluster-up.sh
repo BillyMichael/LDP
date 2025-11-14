@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source common formatting functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/common.sh"
+
+# ============================================================================
+# CONFIG
+# ============================================================================
+
 CLUSTER_NAME="${CLUSTER_NAME:-ldp}"
 KIND_CFG="${KIND_CFG:-cluster/cluster-config.yaml}"
 ARGOCD_NS="${ARGOCD_NS:-orchestration}"
@@ -8,131 +16,150 @@ ARGOCD_CHART_DIR="${CHART_DIR:-platform-apps/orchestration/argocd}"
 ARGOCD_RELEASE="${ARGOCD_RELEASE:-argocd}"
 APPSET_FILE="${APPSET_FILE:-${ARGOCD_CHART_DIR}/templates/applicationsets-platform.yaml}"
 
-# Detect container engine: prefer docker, fallback podman
+
+# ============================================================================
+# DETECT CONTAINER ENGINE
+# ============================================================================
+
+section "Detecting Container Engine"
+
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+  ok "Using Docker"
   CE="docker"
 elif command -v podman >/dev/null 2>&1; then
+  ok "Using Podman"
   CE="podman"
   export KIND_EXPERIMENTAL_PROVIDER=podman
 else
-  echo "❌ Need docker or podman installed and running."
+  error "Docker or Podman is required"
   exit 1
 fi
 
-# Check required tools
-command -v kind >/dev/null 2>&1 || { echo "❌ kind not found"; exit 1; }
-command -v kubectl >/dev/null 2>&1 || { echo "❌ kubectl not found"; exit 1; }
-command -v helm >/dev/null 2>&1 || { echo "❌ helm not found"; exit 1; }
 
-# Create Kind Cluster
-if kind get clusters 2>/dev/null | grep -qx "${CLUSTER_NAME}"; then
-  echo "→ Cluster '${CLUSTER_NAME}' already exists"
-else
-  echo "▶ Creating cluster '${CLUSTER_NAME}'..."
-  kind create cluster --name "${CLUSTER_NAME}" --config "${KIND_CFG}" --quiet
-  echo "✅ Cluster created"
-fi
+# ============================================================================
+# CHECK REQUIRED TOOLS
+# ============================================================================
 
-# Install Argo CD
-# Add Argo CD Helm repository
-echo "▶ Adding Argo CD Helm repository..."
-helm repo add argo https://argoproj.github.io/argo-helm >/dev/null 2>&1 || true
-helm repo update >/dev/null 2>&1
+section "Checking Required Tools"
 
-# Install Argo CD
-echo "▶ Installing Argo CD..."
-helm upgrade --install "${ARGOCD_RELEASE}" argo/argo-cd \
-  --namespace "${ARGOCD_NS}" \
-  --create-namespace \
-  --wait \
-  --timeout=5m \
-  >/dev/null 2>&1
-
-echo "✅ Argo CD installed"
-
-echo "▶ Migrate to our Argo CD chart now CRDs are installed..."
-helm upgrade --install "${ARGOCD_RELEASE}" ./platform-apps/orchestration/argocd \
-  --namespace "${ARGOCD_NS}" \
-  --wait \
-  --dependency-update \
-  --timeout=5m \
-  >/dev/null 2>&1
-
-echo "✅ Argo CD Migration complete"
-
-# Wait for LLDAP user secrets to be created
-echo "▶ Waiting for LLDAP user secrets..."
-LLDAP_NS="auth"
-LLDAP_SECRETS=("lldap-admin-credentials" "lldap-maintainer-credentials" "lldap-user-credentials")
-
-TIMEOUT=300
-ELAPSED=0
-for SECRET in "${LLDAP_SECRETS[@]}"; do
-  while ! kubectl -n "${LLDAP_NS}" get secret "${SECRET}" >/dev/null 2>&1; do
-    if [ ${ELAPSED} -ge ${TIMEOUT} ]; then
-      echo "⚠️  Timeout waiting for secret '${SECRET}' in namespace '${LLDAP_NS}'"
-      break
-    fi
-    sleep 2
-    ELAPSED=$((ELAPSED + 2))
-  done
+for tool in kind kubectl helm; do
+  if command -v "$tool" >/dev/null 2>&1; then
+    ok "$tool found"
+  else
+    error "$tool not found"
+    exit 1
+  fi
 done
 
-echo "✅ LLDAP user secrets created"
 
-# Configure CoreDNS to resolve *.127.0.0.1.nip.io to Traefik
-echo "▶ Configuring CoreDNS to resolve *.127.0.0.1.nip.io to Traefik..."
+# ============================================================================
+# CREATE KIND CLUSTER
+# ============================================================================
 
-# Find Traefik service namespace and name (adjust if needed)
+section "Creating Kind Cluster"
+
+if kind get clusters 2>/dev/null | grep -qx "$CLUSTER_NAME"; then
+  ok "Cluster '$CLUSTER_NAME' already exists"
+else
+  run_step "Creating cluster '$CLUSTER_NAME'" \
+    kind create cluster --name "$CLUSTER_NAME" --config "$KIND_CFG" --quiet
+fi
+
+
+# ============================================================================
+# INSTALL ARGO CD
+# ============================================================================
+
+section "Installing Argo CD"
+
+run_step "Adding Argo CD Helm repository" \
+  helm repo add argo https://argoproj.github.io/argo-helm
+
+run_step "Updating Helm repositories" \
+  helm repo update
+
+run_step "Installing Argo CD (core chart)" \
+  helm upgrade --install "$ARGOCD_RELEASE" argo/argo-cd \
+    --namespace "$ARGOCD_NS" \
+    --create-namespace \
+    --wait \
+    --timeout=5m
+
+run_step "Migrating to custom Argo CD chart" \
+  helm upgrade --install "$ARGOCD_RELEASE" "$ARGOCD_CHART_DIR" \
+    --namespace "$ARGOCD_NS" \
+    --wait \
+    --dependency-update \
+    --timeout=5m
+
+
+# ============================================================================
+# WAIT FOR LLDAP SECRETS
+# ============================================================================
+
+section "Waiting for User Secrets"
+
+LLDAP_NS="auth"
+LLDAP_SECRETS=("admin" "maintainer" "user")
+
+for SECRET in "${LLDAP_SECRETS[@]}"; do
+  run_step "Waiting for '${SECRET}' credentials" \
+    bash -c "
+      for _ in {1..150}; do
+        kubectl -n '$LLDAP_NS' get secret 'lldap-${SECRET}-credentials' >/dev/null 2>&1 && exit 0
+        sleep 2
+      done
+      exit 1
+    "
+done
+
+
+# ============================================================================
+# CONFIGURE COREDNS
+# ============================================================================
+
+section "Configuring CoreDNS (nip.io → Traefik)"
+
 TRAEFIK_NS="core"
 TRAEFIK_SVC="traefik"
 
-# Wait for Traefik service to exist
-TIMEOUT=60
-ELAPSED=0
-while ! kubectl -n "${TRAEFIK_NS}" get service "${TRAEFIK_SVC}" >/dev/null 2>&1; do
-  if [ ${ELAPSED} -ge ${TIMEOUT} ]; then
-    echo "⚠️  Timeout waiting for Traefik service, skipping CoreDNS configuration"
-    break
-  fi
-  sleep 2
-  ELAPSED=$((ELAPSED + 2))
-done
+run_step "Waiting for Traefik service" \
+  bash -c "
+    for _ in {1..30}; do
+      kubectl -n '$TRAEFIK_NS' get service '$TRAEFIK_SVC' >/dev/null 2>&1 && exit 0
+      sleep 2
+    done
+    exit 1
+  "
 
-if kubectl -n "${TRAEFIK_NS}" get service "${TRAEFIK_SVC}" >/dev/null 2>&1; then
-  # Get Traefik ClusterIP
-  TRAEFIK_IP=$(kubectl -n "${TRAEFIK_NS}" get service "${TRAEFIK_SVC}" -o jsonpath='{.spec.clusterIP}')
+TRAEFIK_IP="$(kubectl -n "$TRAEFIK_NS" get service "$TRAEFIK_SVC" -o jsonpath='{.spec.clusterIP}')"
 
-  if [ -n "${TRAEFIK_IP}" ]; then
-    # Update CoreDNS to resolve *.127.0.0.1.nip.io to Traefik
-    # Get current Corefile and add hosts/rewrite rules at the beginning of the main server block
-    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' | \
-      awk -v traefik_ip="${TRAEFIK_IP}" '
-      /^\.:[0-9]+ \{/ {
-        print $0
-        print "    hosts {"
-        print "      " traefik_ip " 127.0.0.1.nip.io"
-        print "      fallthrough"
-        print "    }"
-        print "    rewrite name regex (.+\\.)?127\\.0\\.0\\.1\\.nip\\.io 127.0.0.1.nip.io"
-        next
-      }
-      { print }
+run_step "Patching CoreDNS config" \
+  bash -c "
+    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' |
+      awk -v traefik_ip='$TRAEFIK_IP' '
+        /^\.:[0-9]+ \{/ {
+          print \$0
+          print \"    hosts {\"
+          print \"      \" traefik_ip \" 127.0.0.1.nip.io\"
+          print \"      fallthrough\"
+          print \"    }\"
+          print \"    rewrite name regex (.+\\.)?127\\.0\\.0\\.1\\.nip\\.io 127.0.0.1.nip.io\"
+          next
+        }
+        { print }
       ' > /tmp/coredns-corefile.txt
 
-    # Apply the updated config
     kubectl create configmap coredns --from-file=Corefile=/tmp/coredns-corefile.txt \
-      --dry-run=client -o yaml | \
-      kubectl apply -n kube-system -f - >/dev/null 2>&1
+      --dry-run=client -o yaml |
+      kubectl apply -n kube-system -f -
 
-    kubectl rollout restart deployment/coredns -n kube-system >/dev/null 2>&1
-    kubectl rollout status deployment/coredns -n kube-system --timeout=60s >/dev/null 2>&1
+    kubectl rollout restart deployment/coredns -n kube-system
+  "
 
-    rm -f /tmp/coredns-corefile.txt
 
-    echo "✅ CoreDNS configured (*.127.0.0.1.nip.io resolves to Traefik ${TRAEFIK_IP} inside cluster)"
-  fi
-fi
+# ============================================================================
+# FINAL INFO
+# ============================================================================
 
-# Display Access Information
 bash cluster/show-info.sh
