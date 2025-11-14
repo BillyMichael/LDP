@@ -1,0 +1,30 @@
+kargo: 
+  api:
+    oidc: 
+      enabled: true
+      issuerURL: https://identity.agora.gluki.io/realms/gluki
+      clientID: kargo-mgmt
+      dex:
+        enabled: false
+      admins:
+        claims:
+          groups:
+          - platform-admins
+    host: kargo.agora.gluki.io
+    adminAccount: 
+      enabled: false
+    ingress:
+      enabled: true
+      pathType: Prefix
+      ingressClassName: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      tls:
+        enabled: true
+        selfSignedCert: false 
+  controller:
+    globalCredentials:
+      namespaces: orchestration
+    argocd:
+      namespace: orchestration

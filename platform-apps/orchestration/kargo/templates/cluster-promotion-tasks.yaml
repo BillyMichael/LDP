@@ -1,0 +1,38 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ClusterPromotionTask
+metadata:
+  name: promote
+spec:
+  vars:
+  - name: image
+    value: ghcr.io/akuity/guestbook
+  - name: environment
+    value: dev
+  - name: repoURL
+    value: https://github.com/akuity/kargo-helm.git
+  - name: branch
+    value: main
+  - name: helmImageTag
+  - name: chartLocation
+  steps:
+  - uses: git-clone
+    config:
+      repoURL: "{{ `${{ vars.repoURL }}` }}"
+      checkout:
+      - branch: "{{ `${{ vars.branch }}`}}"
+        path: ./src
+  - uses: yaml-update
+    as: update-image
+    config:
+      path: "./src/{{ `${{ vars.chartLocation }}` }}/values.{{ `${{ vars.environment }}` }}.yaml"
+      updates:
+      - key: "{{ `${{ vars.helmImageTag }}` }}"
+        value: "{{ `${{ imageFrom( vars.image ).Tag }}` }}"
+  - uses: git-commit
+    as: commit
+    config:
+      path: ./src
+      message: "[skip ci] - {{ `${{ task.outputs['update-image'].commitMessage }}` }}"
+  - uses: git-push
+    config:
+      path: ./src

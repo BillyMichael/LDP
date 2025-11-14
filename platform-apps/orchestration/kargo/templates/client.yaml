@@ -1,0 +1,8 @@
+apiVersion: auth.gluki.io/v1alpha1
+kind: Client
+metadata:
+  name: kargo
+spec:
+  accessType: PUBLIC
+  webOrigins: 
+    - "*"
