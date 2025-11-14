@@ -80,5 +80,59 @@ done
 
 echo "✅ LLDAP user secrets created"
 
+# Configure CoreDNS to resolve *.127.0.0.1.nip.io to Traefik
+echo "▶ Configuring CoreDNS to resolve *.127.0.0.1.nip.io to Traefik..."
+
+# Find Traefik service namespace and name (adjust if needed)
+TRAEFIK_NS="core"
+TRAEFIK_SVC="traefik"
+
+# Wait for Traefik service to exist
+TIMEOUT=60
+ELAPSED=0
+while ! kubectl -n "${TRAEFIK_NS}" get service "${TRAEFIK_SVC}" >/dev/null 2>&1; do
+  if [ ${ELAPSED} -ge ${TIMEOUT} ]; then
+    echo "⚠️  Timeout waiting for Traefik service, skipping CoreDNS configuration"
+    break
+  fi
+  sleep 2
+  ELAPSED=$((ELAPSED + 2))
+done
+
+if kubectl -n "${TRAEFIK_NS}" get service "${TRAEFIK_SVC}" >/dev/null 2>&1; then
+  # Get Traefik ClusterIP
+  TRAEFIK_IP=$(kubectl -n "${TRAEFIK_NS}" get service "${TRAEFIK_SVC}" -o jsonpath='{.spec.clusterIP}')
+
+  if [ -n "${TRAEFIK_IP}" ]; then
+    # Update CoreDNS to resolve *.127.0.0.1.nip.io to Traefik
+    # Get current Corefile and add hosts/rewrite rules at the beginning of the main server block
+    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' | \
+      awk -v traefik_ip="${TRAEFIK_IP}" '
+      /^\.:[0-9]+ \{/ {
+        print $0
+        print "    hosts {"
+        print "      " traefik_ip " 127.0.0.1.nip.io"
+        print "      fallthrough"
+        print "    }"
+        print "    rewrite name regex (.+\\.)?127\\.0\\.0\\.1\\.nip\\.io 127.0.0.1.nip.io"
+        next
+      }
+      { print }
+      ' > /tmp/coredns-corefile.txt
+
+    # Apply the updated config
+    kubectl create configmap coredns --from-file=Corefile=/tmp/coredns-corefile.txt \
+      --dry-run=client -o yaml | \
+      kubectl apply -n kube-system -f - >/dev/null 2>&1
+
+    kubectl rollout restart deployment/coredns -n kube-system >/dev/null 2>&1
+    kubectl rollout status deployment/coredns -n kube-system --timeout=60s >/dev/null 2>&1
+
+    rm -f /tmp/coredns-corefile.txt
+
+    echo "✅ CoreDNS configured (*.127.0.0.1.nip.io resolves to Traefik ${TRAEFIK_IP} inside cluster)"
+  fi
+fi
+
 # Display Access Information
 bash cluster/show-info.sh
