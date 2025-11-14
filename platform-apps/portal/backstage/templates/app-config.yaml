@@ -6,14 +6,14 @@ data:
   app-config.extra.yaml: |
     app:
       title: "GlobalLogic Backstage"
-      baseUrl: https://portal.host.docker.internal
+      baseUrl: https://portal.localhost
 
     backend:
-      baseUrl: https://portal.host.docker.internal
+      baseUrl: https://portal.localhost
       listen:
         port: 7007
       cors:
-        origin: https://portal.host.docker.internal
+        origin: https://portal.localhost
         methods: [GET, POST, PUT, DELETE]
         credentials: true
 
@@ -22,7 +22,7 @@ data:
       providers:
         oidc:
           production:
-            metadataUrl: https://auth.host.docker.internal/api/oidc/.well-known/openid-configuration
+            metadataUrl: https://auth.localhost/api/oidc/.well-known/openid-configuration
             clientId: backstage-client
             clientSecret: insecure_secret
             prompt: auto

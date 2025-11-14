@@ -58,9 +58,9 @@ authelia:
     session:
       cookies:
         - name: authelia_session
-          domain: host.docker.internal
+          domain: localhost
           subdomain: auth
-          authelia_url: https://auth.host.docker.internal
+          authelia_url: https://auth.localhost
           same_site: lax
           secure: true
           expiration: 1h
@@ -102,7 +102,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: ''
             redirect_uris:
-              - 'https://cd.host.docker.internal/auth/callback'
+              - 'https://cd.localhost/auth/callback'
             scopes:
               - 'openid'
               - 'groups'
@@ -121,7 +121,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: 'S256'
             redirect_uris:
-              - 'https://cd.host.docker.internal/auth/callback'
+              - 'https://cd.localhost/auth/callback'
             scopes:
               - 'openid'
               - 'offline_access'
@@ -141,8 +141,8 @@ authelia:
             public: false
             authorization_policy: one_factor
             redirect_uris:
-              - https://portal.host.docker.internal/api/auth/oidc/handler/frame
-              - https://portal.host.docker.internal/api/auth/oidc/handler
+              - https://portal.localhost/api/auth/oidc/handler/frame
+              - https://portal.localhost/api/auth/oidc/handler
             scopes:
               - openid
               - profile

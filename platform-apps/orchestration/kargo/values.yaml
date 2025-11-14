@@ -2,7 +2,7 @@ kargo:
   api:
     oidc: 
       enabled: true
-      issuerURL: https://auth.host.docker.internal/realms/gluki
+      issuerURL: https://auth.localhost/realms/gluki
       clientID: kargo
       dex:
         enabled: false
@@ -10,7 +10,7 @@ kargo:
         claims:
           groups:
           - admins
-    host: kargo.host.docker.internal
+    host: kargo.localhost
     adminAccount: 
       enabled: false
     ingress:
