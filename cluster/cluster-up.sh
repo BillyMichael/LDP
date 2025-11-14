@@ -149,10 +149,10 @@ run_step "Patching CoreDNS config" \
         /^\.:[0-9]+ \{/ {
           print \$0
           print \"    hosts {\"
-          print \"      \" traefik_ip \" 127.0.0.1.nip.io\"
+          print \"      \" traefik_ip \" localhost.nip.io\"
           print \"      fallthrough\"
           print \"    }\"
-          print \"    rewrite name regex (.+\\.)?127\\.0\\.0\\.1\\.nip\\.io 127.0.0.1.nip.io\"
+          print \"    rewrite name regex (.+\\.)?127\\.0\\.0\\.1\\.nip\\.io localhost.nip.io\"
           next
         }
         { print }
