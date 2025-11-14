@@ -40,7 +40,7 @@ spinner() {
   local i=0
 
   while kill -0 "$pid" 2>/dev/null; do
-    printf "\r  ${BLUE}%s${NC} %s..." "${SPINNER_FRAMES[$i]}" "$msg"
+    printf "\r  ${BLUE}%s${NC}  %s..." "${SPINNER_FRAMES[$i]}" "$msg"
     i=$(( (i + 1) % ${#SPINNER_FRAMES[@]} ))
     sleep 0.1
   done
@@ -51,25 +51,28 @@ run_step() {
   shift
 
   # Run command in background
-  ("$@" >/dev/null 2>&1) &
+  "$@" >/tmp/null 2>&1 &
   local cmd_pid=$!
 
   # Start spinner linked to command pid
   spinner "$msg" "$cmd_pid" &
   local spinner_pid=$!
 
-  # Wait for command to terminate
+  # Wait for main command to finish
   wait "$cmd_pid"
   local status=$?
 
-  # Kill spinner
-  kill "$spinner_pid" 2>/dev/null || true
-  wait "$spinner_pid" 2>/dev/null || true
+  # Stop spinner safely
+  if kill -0 "$spinner_pid" 2>/dev/null; then
+    kill -TERM "$spinner_pid" 2>/dev/null || true
+    wait "$spinner_pid" 2>/dev/null || true
+  fi
 
+  # Print final result
   if [ "$status" -eq 0 ]; then
-    printf "\r  ${GREEN}✔${NC} %s\n" " $msg"
+    printf "\r  ${GREEN}✔${NC}  %s\n" "$msg"
   else
-    printf "\r  ${RED}✖${NC} %s\n" " $msg"
+    printf "\r  ${RED}✖${NC}  %s\n" "$msg"
   fi
 
   return "$status"
