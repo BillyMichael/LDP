@@ -97,7 +97,7 @@ run_step "Migrating to custom Argo CD chart" \
 # WAIT FOR LLDAP SECRETS
 # ============================================================================
 
-section "Waiting for User Secrets"
+section "Waiting for Authentication Provider"
 
 LLDAP_NS="auth"
 LLDAP_SECRETS=("admin" "maintainer" "user")
@@ -112,6 +112,14 @@ for SECRET in "${LLDAP_SECRETS[@]}"; do
       exit 1
     "
 done
+
+run_step "Waiting for Authelia pods to be ready" \
+  bash -c "
+    kubectl wait --for=condition=ready pod \
+      -l app.kubernetes.io/name=authelia \
+      -n '$LLDAP_NS' \
+      --timeout=300s
+  "
 
 
 # ============================================================================
