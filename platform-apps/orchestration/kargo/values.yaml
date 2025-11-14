@@ -2,15 +2,15 @@ kargo:
   api:
     oidc: 
       enabled: true
-      issuerURL: https://identity.agora.gluki.io/realms/gluki
-      clientID: kargo-mgmt
+      issuerURL: https://auth.host.docker.internal/realms/gluki
+      clientID: kargo
       dex:
         enabled: false
       admins:
         claims:
           groups:
-          - platform-admins
-    host: kargo.agora.gluki.io
+          - admins
+    host: kargo.host.docker.internal
     adminAccount: 
       enabled: false
     ingress:
@@ -18,8 +18,8 @@ kargo:
       pathType: Prefix
       ingressClassName: nginx
       annotations:
-        cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        cert-manager.io/cluster-issuer: selfsigned
       tls:
         enabled: true
         selfSignedCert: false 
