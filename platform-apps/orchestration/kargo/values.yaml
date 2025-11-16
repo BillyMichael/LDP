@@ -4,6 +4,8 @@ kargo:
   webhooksServer:
     enabled: false
   api:
+    cabundle:
+      secretName: kargo-api-ingress-cert
     oidc: 
       enabled: true
       issuerURL: https://auth.127.0.0.1.nip.io
