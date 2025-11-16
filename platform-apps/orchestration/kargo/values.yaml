@@ -1,4 +1,6 @@
 kargo: 
+  externalWebhooksServer:
+    enabled: false
   api:
     oidc: 
       enabled: true
