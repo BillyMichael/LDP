@@ -23,17 +23,34 @@ APPSET_FILE="${APPSET_FILE:-${ARGOCD_CHART_DIR}/templates/applicationsets-platfo
 
 section "Detecting Container Engine"
 
-if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
-  ok "Using Docker"
+if [[ "${KIND_EXPERIMENTAL_PROVIDER:-}" == "podman" ]]; then
+  if command -v podman >/dev/null 2>&1; then
+    ok "Using Podman (via KIND_EXPERIMENTAL_PROVIDER)"
+    CE="podman"
+  else
+    error "KIND_EXPERIMENTAL_PROVIDER=podman is set but Podman is not installed."
+    exit 1
+  fi
+
+elif command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+  if docker info 2>/dev/null | grep -qi "docker desktop"; then
+    error "Docker Desktop detected — not supported. Use Podman or Docker Engine."
+    exit 1
+  fi
+
+  ok "Using Docker Engine"
   CE="docker"
+
 elif command -v podman >/dev/null 2>&1; then
   ok "Using Podman"
   CE="podman"
   export KIND_EXPERIMENTAL_PROVIDER=podman
+
 else
-  error "Docker or Podman is required"
+  error "No supported container engine found (need Docker Engine or Podman)."
   exit 1
 fi
+
 
 
 # ============================================================================
