@@ -113,14 +113,21 @@ for SECRET in "${LLDAP_SECRETS[@]}"; do
     "
 done
 
-run_step "Waiting for Authelia pods to be ready" \
+run_step "Waiting for Authelia to be Ready" \
   bash -c "
-    kubectl wait --for=condition=ready pod \
-      -l app.kubernetes.io/name=authelia \
-      -n '$LLDAP_NS' \
-      --timeout=300s
-  "
+    for _ in {1..150}; do
+      READY=\$(kubectl -n '$LLDAP_NS' get pods -l app.kubernetes.io/name=authelia \
+        -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}' 2>/dev/null)
 
+      if [[ \"\$READY\" =~ ^(True|true)$ ]]; then
+        exit 0
+      fi
+
+      sleep 2
+    done
+
+    exit 1
+  "
 
 # ============================================================================
 # CONFIGURE COREDNS

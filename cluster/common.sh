@@ -32,12 +32,15 @@ error() { printf "  ${RED}✖${NC} %s\n" " $1"; }
 # SPINNER & STEP EXECUTION LOGIC
 # ============================================================================
 
-SPINNER_FRAMES=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+SPINNER_FRAMES=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
 
 spinner() {
   local msg="$1"
   local pid="$2"
   local i=0
+
+  # Stop spinner on interrupt
+  trap "exit 1" INT TERM
 
   while kill -0 "$pid" 2>/dev/null; do
     printf "\r  ${BLUE}%s${NC}  %s..." "${SPINNER_FRAMES[$i]}" "$msg"
@@ -47,33 +50,45 @@ spinner() {
 }
 
 run_step() {
-  local msg="$1"
-  shift
+  local msg="$1"; shift
+
+  local start_ts
+  start_ts=$(date +%s)
 
   # Run command in background
-  "$@" >/tmp/null 2>&1 &
+  "$@" >/dev/null 2>&1 &
   local cmd_pid=$!
 
-  # Start spinner linked to command pid
+  # Start spinner bound to command PID
   spinner "$msg" "$cmd_pid" &
   local spinner_pid=$!
 
-  # Wait for main command to finish
+  # Trap Ctrl-C and clean up both processes
+  trap "kill $cmd_pid 2>/dev/null; kill $spinner_pid 2>/dev/null; exit 1" INT TERM
+
+  # Wait for main command
   wait "$cmd_pid"
   local status=$?
 
-  # Stop spinner safely
-  if kill -0 "$spinner_pid" 2>/dev/null; then
-    kill -TERM "$spinner_pid" 2>/dev/null || true
-    wait "$spinner_pid" 2>/dev/null || true
-  fi
+  # Cleanup spinner
+  kill "$spinner_pid" 2>/dev/null || true
+  wait "$spinner_pid" 2>/dev/null || true
 
-  # Print final result
+  local end_ts
+  end_ts=$(date +%s)
+  local duration=$(( end_ts - start_ts ))
+
+  # Final output replacing spinner line
   if [ "$status" -eq 0 ]; then
-    printf "\r  ${GREEN}✔${NC}  %s\n" "$msg"
+    printf "\r  ${GREEN}✔${NC}  %s (${duration}s)\n" "$msg"
   else
-    printf "\r  ${RED}✖${NC}  %s\n" "$msg"
+    printf "\r  ${RED}✖${NC}  %s (${duration}s)\n" "$msg"
   fi
 
   return "$status"
+}
+
+# Optional: Sugar syntax
+step() {
+  run_step "$@"
 }
