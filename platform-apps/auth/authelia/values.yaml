@@ -58,9 +58,9 @@ authelia:
     session:
       cookies:
         - name: authelia_session
-          domain: localhost.nip.io
+          domain: 127.0.0.1.nip.io
           subdomain: auth
-          authelia_url: https://auth.localhost.nip.io
+          authelia_url: https://auth.127.0.0.1.nip.io
           same_site: lax
           secure: true
           expiration: 1h
@@ -102,7 +102,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: ''
             redirect_uris:
-              - 'https://cd.localhost.nip.io/auth/callback'
+              - 'https://cd.127.0.0.1.nip.io/auth/callback'
             scopes:
               - 'openid'
               - 'groups'
@@ -121,7 +121,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: 'S256'
             redirect_uris:
-              - 'https://cd.localhost.nip.io/auth/callback'
+              - 'https://cd.127.0.0.1.nip.io/auth/callback'
             scopes:
               - 'openid'
               - 'offline_access'
@@ -144,8 +144,8 @@ authelia:
             pkce_challenge_method: 'S256'
             authorization_policy: one_factor
             redirect_uris:
-              - https://portal.localhost.nip.io/api/auth/oidc/handler/frame
-              - https://portal.localhost.nip.io/api/auth/oidc/handler
+              - https://portal.127.0.0.1.nip.io/api/auth/oidc/handler/frame
+              - https://portal.127.0.0.1.nip.io/api/auth/oidc/handler
             scopes:
               - openid
               - profile

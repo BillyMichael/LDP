@@ -62,9 +62,9 @@ subsection "URLs:"
 printf "  ┌──────────────┬────────────────────────────────────────────┐\n"
 printf "  │ %-12s │ %-42s │\n" "Service" "URL"
 printf "  ├──────────────┼────────────────────────────────────────────┤\n"
-printf "  │ %-12s │ %-42s │\n" "ArgoCD"   "https://cd.localhost.nip.io"
-printf "  │ %-12s │ %-42s │\n" "Authelia" "https://auth.localhost.nip.io"
-printf "  │ %-12s │ %-42s │\n" "Gitea"    "https://vcs.localhost.nip.io"
+printf "  │ %-12s │ %-42s │\n" "ArgoCD"   "https://cd.127.0.0.1.nip.io"
+printf "  │ %-12s │ %-42s │\n" "Authelia" "https://auth.127.0.0.1.nip.io"
+printf "  │ %-12s │ %-42s │\n" "Gitea"    "https://vcs.127.0.0.1.nip.io"
 printf "  └──────────────┴────────────────────────────────────────────┘\n\n"
 
 
