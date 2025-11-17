@@ -109,6 +109,48 @@ run_step "Migrating to custom Argo CD chart" \
     --dependency-update \
     --timeout=5m
 
+# ============================================================================
+# CONFIGURE COREDNS
+# ============================================================================
+
+section "Configuring CoreDNS (nip.io → Traefik)"
+
+TRAEFIK_NS="core"
+TRAEFIK_SVC="traefik"
+
+run_step "Waiting for Traefik service" \
+  bash -c "
+    for _ in {1..30}; do
+      kubectl -n '$TRAEFIK_NS' get service '$TRAEFIK_SVC' >/dev/null 2>&1 && exit 0
+      sleep 2
+    done
+    exit 1
+  "
+
+TRAEFIK_IP="$(kubectl -n "$TRAEFIK_NS" get service "$TRAEFIK_SVC" -o jsonpath='{.spec.clusterIP}')"
+
+run_step "Patching CoreDNS config" \
+  bash -c "
+    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' |
+      awk -v traefik_ip='$TRAEFIK_IP' '
+        /^\.:[0-9]+ \{/ {
+          print \$0
+          print \"    hosts {\"
+          print \"      \" traefik_ip \" 127-0-0-1.nip.io\"
+          print \"      fallthrough\"
+          print \"    }\"
+          print \"    rewrite name regex (.+)\\\\.127-0-0-1\\\\.nip\\\\.io {1}-127-0-0-1.nip.io\"
+          next
+        }
+        { print }
+      ' > /tmp/coredns-corefile.txt
+
+    kubectl create configmap coredns --from-file=Corefile=/tmp/coredns-corefile.txt \
+      --dry-run=client -o yaml |
+      kubectl apply -n kube-system -f -
+
+    kubectl rollout restart deployment/coredns -n kube-system
+  "
 
 # ============================================================================
 # WAIT FOR LLDAP SECRETS
@@ -144,49 +186,6 @@ run_step "Waiting for Authelia to be Ready" \
     done
 
     exit 1
-  "
-
-# ============================================================================
-# CONFIGURE COREDNS
-# ============================================================================
-
-section "Configuring CoreDNS (nip.io → Traefik)"
-
-TRAEFIK_NS="core"
-TRAEFIK_SVC="traefik"
-
-run_step "Waiting for Traefik service" \
-  bash -c "
-    for _ in {1..30}; do
-      kubectl -n '$TRAEFIK_NS' get service '$TRAEFIK_SVC' >/dev/null 2>&1 && exit 0
-      sleep 2
-    done
-    exit 1
-  "
-
-TRAEFIK_IP="$(kubectl -n "$TRAEFIK_NS" get service "$TRAEFIK_SVC" -o jsonpath='{.spec.clusterIP}')"
-
-run_step "Patching CoreDNS config" \
-  bash -c "
-    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' |
-      awk -v traefik_ip='$TRAEFIK_IP' '
-        /^\.:[0-9]+ \{/ {
-          print \$0
-          print \"    hosts {\"
-          print \"      \" traefik_ip \" 127-0-0-1.nip.io\"
-          print \"      fallthrough\"
-          print \"    }\"
-          print \"    rewrite name regex (.+\\.)?127\\.0\\.0\\.1\\.nip\\.io 127-0-0-1.nip.io\"
-          next
-        }
-        { print }
-      ' > /tmp/coredns-corefile.txt
-
-    kubectl create configmap coredns --from-file=Corefile=/tmp/coredns-corefile.txt \
-      --dry-run=client -o yaml |
-      kubectl apply -n kube-system -f -
-
-    kubectl rollout restart deployment/coredns -n kube-system
   "
 
 
