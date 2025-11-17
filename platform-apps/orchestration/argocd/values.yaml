@@ -5,7 +5,7 @@ argo-cd:
       enabled: true
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure
-        cert-manager.io/cluster-issuer: selfsigned
+        cert-manager.io/cluster-issuer: letsencrypt
       hostname: cd.127.0.0.1.nip.io
       tls: true
 

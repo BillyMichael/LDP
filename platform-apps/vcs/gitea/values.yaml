@@ -3,7 +3,7 @@ gitea:
     enabled: true
     annotations:
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
-      cert-manager.io/cluster-issuer: selfsigned
+      cert-manager.io/cluster-issuer: letsencrypt
     hosts:
       - host: vcs.127.0.0.1.nip.io
     tls:
