@@ -58,8 +58,7 @@ authelia:
     session:
       cookies:
         - name: authelia_session
-          domain: 127-0-0-1.nip.io
-          subdomain: auth
+          domain: auth-127-0-0-1.nip.io
           authelia_url: https://auth-127-0-0-1.nip.io
           same_site: lax
           secure: true
