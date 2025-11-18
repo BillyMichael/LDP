@@ -139,7 +139,7 @@ run_step "Patching CoreDNS config" \
           print \"      \" traefik_ip \" 127-0-0-1.nip.io\"
           print \"      fallthrough\"
           print \"    }\"
-          print \"    rewrite name regex (.+)\\\\.127-0-0-1\\\\.nip\\\\.io {1}-127-0-0-1.nip.io\"
+          print \"    rewrite name regex (.+)-127-0-0-1\\\\.nip\\\\.io 127-0-0-1.nip.io\"
           next
         }
         { print }
@@ -151,7 +151,6 @@ run_step "Patching CoreDNS config" \
 
     kubectl rollout restart deployment/coredns -n kube-system
   "
-
 # ============================================================================
 # WAIT FOR LLDAP SECRETS
 # ============================================================================

@@ -12,6 +12,11 @@ traefik:
   deployment:
     kind: DaemonSet
 
+  tlsStore:
+    default:
+      defaultCertificate:
+        secretName: default-tls
+
   # Enable dashboard
   ingressRoute:
     dashboard:
