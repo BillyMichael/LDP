@@ -1,3 +1,4 @@
-cert-manager:
-  crds:
-    enabled: true
+trust-manager:
+  app:
+    trust:
+      namespace: core
