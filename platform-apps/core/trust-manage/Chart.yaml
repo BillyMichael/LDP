@@ -1,0 +1,7 @@
+apiVersion: v2
+name: trust-manager
+version: 1.0.0
+dependencies:
+  - name: trust-manager
+    version: 0.20.2
+    repository: https://charts.jetstack.io
