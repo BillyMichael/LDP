@@ -1,14 +1,44 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer # I'm using ClusterIssuer here
+kind: ClusterIssuer
 metadata:
-  name: letsencrypt
+  name: selfsigned-issuer
 spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: admin@local-developer-platform.co.uk
-    privateKeySecretRef:
-      name: letsencrypt-prod
-    solvers:
-    - http01:
-        ingress:
-          class: traefik 
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-ca
+spec:
+  isCA: true
+  commonName: selfsigned-ca
+  secretName: root-ca
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ca-issuer
+spec:
+  ca:
+    secretName: ca-secret
+---
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: ca
+spec:
+  sources:
+  - useDefaultCAs: true
+  - secret:
+      name: "root-ca"
+      key: "tls.crt"
+  target:
+    configMap:
+      key: "trust-bundle.pem"
