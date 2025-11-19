@@ -3,6 +3,7 @@ authelia:
     enabled: true
     annotations:
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      cert-manager.io/cluster-issuer: letsencrypt
     tls:
       enabled: true
   configMap:
