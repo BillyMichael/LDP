@@ -90,6 +90,9 @@ authelia:
             - 'introspection'
           allowed_origins: 
             - "*"
+        claims_policies:
+          default:
+            id_token: ['groups', 'email', 'preferred_username', 'name']
         enable_client_debug_messages: true
         clients:
           - client_id: 'argocd'
@@ -156,6 +159,7 @@ authelia:
               - code
           - client_id: kargo
             client_name: Kargo
+            claims_policy: 'default'
             public: true
             authorization_policy: one_factor
             require_pkce: false
