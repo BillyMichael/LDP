@@ -1,9 +1,11 @@
-kargo: 
+kargo:
   externalWebhooksServer:
     enabled: false
   webhooksServer:
     enabled: false
   api:
+    cabundle:
+      configMapName: ca
     oidc:
       enabled: true
       issuerURL: https://auth-127-0-0-1.nip.io
