@@ -29,6 +29,8 @@ kargo:
         enabled: true
         selfSignedCert: false 
   controller:
+    cabundle:
+      configMapName: ca
     globalCredentials:
       namespaces: orchestration
     argocd:
