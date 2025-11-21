@@ -156,8 +156,7 @@ authelia:
               - code
           - client_id: kargo
             client_name: Kargo
-            client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
-            public: false
+            public: true
             authorization_policy: one_factor
             require_pkce: false
             consent: implicit
@@ -165,10 +164,10 @@ authelia:
             redirect_uris:
               - https://kargo-127-0-0-1.nip.io/login
             scopes:
-              - openid
-              - groups
-              - email
-              - profile
+              - 'openid'
+              - 'offline_access'
+              - 'groups'
+              - 'email'
             grant_types:
               - authorization_code
             response_types:
