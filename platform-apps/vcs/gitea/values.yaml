@@ -18,3 +18,15 @@ gitea:
     enabled: false
   postgresql:
     enabled: true
+  gitea:
+    oauth:
+      - name: "Authelia"
+        provider: "openidConnect"
+        key: "gitea"
+        secret: "insecure_secret"
+        autoDiscoverUrl: "https://auth-127-0-0-1.nip.io/.well-known/openid-configuration"
+        scopes:
+          - "openid"
+          - "profile"
+          - "email"
+          - "groups"
