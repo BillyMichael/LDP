@@ -7,7 +7,7 @@ spec:
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
-    name: selfsigned
+    name: ca-issuer
   privateKey:
     algorithm: RSA
     encoding: PKCS8
