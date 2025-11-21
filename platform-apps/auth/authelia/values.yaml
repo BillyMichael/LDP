@@ -165,6 +165,7 @@ authelia:
               - https://kargo-127-0-0-1.nip.io/login
             scopes:
               - 'openid'
+              - 'profile'
               - 'offline_access'
               - 'groups'
               - 'email'
