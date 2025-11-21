@@ -28,17 +28,3 @@ metadata:
 spec:
   ca:
     secretName: root-ca
----
-apiVersion: trust.cert-manager.io/v1alpha1
-kind: Bundle
-metadata:
-  name: ca
-spec:
-  sources:
-  - useDefaultCAs: false
-  - secret:
-      name: "root-ca"
-      key: "tls.crt"
-  target:
-    configMap:
-      key: "trust-bundle.pem"
