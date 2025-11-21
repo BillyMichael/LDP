@@ -163,7 +163,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: ''
             redirect_uris:
-              - https://kargo-127-0-0-1.nip.io/oauth2-callback
+              - https://kargo-127-0-0-1.nip.io/login
             scopes:
               - openid
               - groups
