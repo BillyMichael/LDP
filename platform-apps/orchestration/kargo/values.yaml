@@ -4,6 +4,8 @@ kargo:
   webhooksServer:
     enabled: false
   api:
+    tls:
+      enabled: false
     cabundle:
       configMapName: ca
     oidc:
