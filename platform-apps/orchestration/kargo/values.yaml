@@ -10,6 +10,7 @@ kargo:
       enabled: true
       issuerURL: https://auth-127-0-0-1.nip.io
       clientID: kargo
+      clientSecret: insecure_secret
       dex:
         enabled: false
       admins:
