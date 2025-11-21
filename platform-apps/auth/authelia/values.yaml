@@ -98,6 +98,7 @@ authelia:
           - client_id: 'argocd'
             client_name: 'Argo CD'
             client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
+            claims_policy: 'default'
             public: false
             authorization_policy: 'one_factor'
             require_pkce: false
@@ -117,6 +118,7 @@ authelia:
             token_endpoint_auth_method: 'client_secret_basic'
           - client_id: 'argocd-cli'
             client_name: 'Argo CD (CLI)'
+            claims_policy: 'default'
             public: true
             authorization_policy: 'one_factor'
             require_pkce: true
@@ -139,6 +141,7 @@ authelia:
             token_endpoint_auth_method: 'none'
           - client_id: backstage-client
             client_name: Backstage Portal
+            claims_policy: 'default'
             client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
             public: false
             require_pkce: true
