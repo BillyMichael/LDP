@@ -6,6 +6,7 @@ authelia:
       cert-manager.io/cluster-issuer: ca-issuer
     tls:
       enabled: true
+      secretName: authelia-tls
   configMap:
     theme: dark 
     log:
