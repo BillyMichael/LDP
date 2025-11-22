@@ -51,7 +51,7 @@ gitea:
       subPath: trust-bundle.pem
       readOnly: true
 
-  statefulset:
+  deployment:
     env:
       - name: SSL_CERT_FILE
         value: /etc/ssl/certs/ldp-ca.pem
