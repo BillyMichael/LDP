@@ -65,4 +65,3 @@ gitea:
           mountPath: /ca
         - name: ca-store
           mountPath: /usr/local/share/ca-certificates
-      resources: {}
