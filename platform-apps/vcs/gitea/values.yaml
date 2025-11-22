@@ -27,6 +27,9 @@ gitea:
         ENABLE_BASIC_AUTHENTICATION: false
         ENABLE_PASSWORD_SIGNIN_FORM: false
         ENABLE_PASSKEY_AUTHENTICATION: false
+      openid:
+        ENABLE_OPENID_SIGNIN: false
+        ENABLE_OPENID_SIGNUP: true
 
 
     oauth:
