@@ -18,6 +18,10 @@ gitea:
     ENABLE_AUTO_REGISTRATION: true
 
   gitea:
+  config:
+    security:
+      ROOT_CA: /etc/ssl/certs/ldp-ca.pem
+
     oauth:
       - name: "Authelia"
         provider: "openidConnect"
