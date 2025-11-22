@@ -21,6 +21,12 @@ gitea:
     config:
       security:
         ROOT_CA: /etc/ssl/certs/ldp-ca.pem
+        ENABLE_BASIC_AUTHENTICATION: false
+        ENABLE_PASSWORD_SIGNIN_FORM: false
+      service:
+        ENABLE_CAPTCHA: false
+        SHOW_REGISTRATION_BUTTON: false
+
 
     oauth:
       - name: "Authelia"
