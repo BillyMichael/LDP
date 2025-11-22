@@ -11,11 +11,11 @@ gitea:
         hosts:
           - vcs-127-0-0-1.nip.io
 
-    service:
-      DISABLE_REGISTRATION: true
+  service:
+    DISABLE_REGISTRATION: true
 
-    oauth2_client:
-      ENABLE_AUTO_REGISTRATION: true
+  oauth2_client:
+    ENABLE_AUTO_REGISTRATION: true
 
   gitea:
     oauth:
@@ -46,10 +46,14 @@ gitea:
         name: ca
     - name: ca-store
       emptyDir: {}
+    - name: system-certs
+      emptyDir: {}
 
   extraVolumeMounts:
     - name: ca-store
       mountPath: /usr/local/share/ca-certificates
+    - name: system-certs
+      mountPath: /etc/ssl/certs
 
   initContainers:
     - name: update-ca
@@ -58,10 +62,16 @@ gitea:
         - sh
         - -c
         - |
+          # Copy the CA certificate to the shared volume
           cp /ca/trust-bundle.pem /usr/local/share/ca-certificates/ldp-ca.crt
-          update-ca-certificates || true
+          # Update CA certificates
+          update-ca-certificates
+          # Copy the updated cert bundle to shared volume for main container
+          cp -r /etc/ssl/certs/* /system-certs/
       volumeMounts:
         - name: ca
           mountPath: /ca
         - name: ca-store
           mountPath: /usr/local/share/ca-certificates
+        - name: system-certs
+          mountPath: /system-certs
