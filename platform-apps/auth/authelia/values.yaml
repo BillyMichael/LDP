@@ -103,7 +103,7 @@ authelia:
             public: false
             authorization_policy: 'one_factor'
             require_pkce: false
-            consent: implicit
+            consent: pre-configured
             pkce_challenge_method: ''
             redirect_uris:
               - 'https://cd-127-0-0-1.nip.io/auth/callback'
@@ -123,7 +123,7 @@ authelia:
             public: true
             authorization_policy: 'one_factor'
             require_pkce: true
-            consent: implicit
+            consent: pre-configured
             pkce_challenge_method: 'S256'
             redirect_uris:
               - 'https://cd-127-0-0-1.nip.io/auth/callback'
@@ -146,7 +146,7 @@ authelia:
             client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
             public: false
             require_pkce: true
-            consent: implicit
+            consent: pre-configured
             pkce_challenge_method: 'S256'
             authorization_policy: one_factor
             redirect_uris:
@@ -167,7 +167,7 @@ authelia:
             public: true
             authorization_policy: one_factor
             require_pkce: false
-            consent: implicit
+            consent: pre-configured
             pkce_challenge_method: ''
             redirect_uris:
               - https://kargo-127-0-0-1.nip.io/login
@@ -191,7 +191,7 @@ authelia:
             public: false
             authorization_policy: one_factor
             require_pkce: false
-            consent: implicit
+            consent: pre-configured
             pkce_challenge_method: ''
             redirect_uris:
               - https://vcs-127-0-0-1.nip.io/user/oauth2/Authelia/callback
