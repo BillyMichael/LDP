@@ -44,34 +44,14 @@ gitea:
     - name: ca
       configMap:
         name: ca
-    - name: ca-store
-      emptyDir: {}
-    - name: system-certs
-      emptyDir: {}
 
   extraVolumeMounts:
-    - name: ca-store
-      mountPath: /usr/local/share/ca-certificates
-    - name: system-certs
-      mountPath: /etc/ssl/certs
+    - name: ca
+      mountPath: /etc/ssl/certs/ldp-ca.pem
+      subPath: trust-bundle.pem
+      readOnly: true
 
-  initContainers:
-    - name: update-ca
-      image: alpine:3.20
-      command:
-        - sh
-        - -c
-        - |
-          # Copy the CA certificate to the shared volume
-          cp /ca/trust-bundle.pem /usr/local/share/ca-certificates/ldp-ca.crt
-          # Update CA certificates
-          update-ca-certificates
-          # Copy the updated cert bundle to shared volume for main container
-          cp -r /etc/ssl/certs/* /system-certs/
-      volumeMounts:
-        - name: ca
-          mountPath: /ca
-        - name: ca-store
-          mountPath: /usr/local/share/ca-certificates
-        - name: system-certs
-          mountPath: /system-certs
+  statefulset:
+    env:
+      - name: SSL_CERT_FILE
+        value: /etc/ssl/certs/ldp-ca.pem
