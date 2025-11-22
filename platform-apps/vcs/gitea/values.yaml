@@ -11,11 +11,11 @@ gitea:
         hosts:
           - vcs-127-0-0-1.nip.io
 
-  service:
-    DISABLE_REGISTRATION: true
+    service:
+      DISABLE_REGISTRATION: true
 
-  oauth2_client:
-    ENABLE_AUTO_REGISTRATION: true
+    oauth2_client:
+      ENABLE_AUTO_REGISTRATION: true
 
   gitea:
     oauth:
@@ -40,51 +40,28 @@ gitea:
   postgresql:
     enabled: true
 
-  # Mount CA certificate into container
   extraVolumes:
-    - name: ca
+    - name: ca               # Your ConfigMap containing trust-bundle.pem
       configMap:
         name: ca
-        defaultMode: 420
+    - name: ca-store         # Shared emptyDir that gets the updated CA bundle
+      emptyDir: {}
 
   extraVolumeMounts:
-    - name: ca
-      mountPath: /usr/local/share/ca-certificates/ldp-ca.pem
-      subPath: trust-bundle.pem
-      readOnly: true
+    - name: ca-store
+      mountPath: /usr/local/share/ca-certificates
 
-  # Add init container to update CA certificates
-  extraInitContainers:
-    - name: update-ca-certificates
-      image: gitea/gitea:1.21.5  # Use same image as main container
+  initContainers:
+    - name: update-ca
+      image: alpine:3.20
       command:
         - sh
         - -c
         - |
-          cp /usr/local/share/ca-certificates/ldp-ca.pem /tmp-certs/ldp-ca.pem
-          update-ca-certificates
-          cp -r /etc/ssl/certs/* /shared-certs/
+          cp /ca/trust-bundle.pem /usr/local/share/ca-certificates/ldp-ca.crt
+          update-ca-certificates || true
       volumeMounts:
         - name: ca
-          mountPath: /usr/local/share/ca-certificates/ldp-ca.pem
-          subPath: trust-bundle.pem
-          readOnly: true
-        - name: shared-certs
-          mountPath: /shared-certs
-        - name: tmp-certs
-          mountPath: /tmp-certs
-
-  extraVolumes:
-    - name: ca
-      configMap:
-        name: ca
-        defaultMode: 420
-    - name: shared-certs
-      emptyDir: {}
-    - name: tmp-certs
-      emptyDir: {}
-
-  extraVolumeMounts:
-    - name: shared-certs
-      mountPath: /etc/ssl/certs
-      readOnly: true
+          mountPath: /ca
+        - name: ca-store
+          mountPath: /usr/local/share/ca-certificates
