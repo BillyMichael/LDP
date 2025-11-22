@@ -41,10 +41,10 @@ gitea:
     enabled: true
 
   extraVolumes:
-    - name: ca               # Your ConfigMap containing trust-bundle.pem
+    - name: ca
       configMap:
         name: ca
-    - name: ca-store         # Shared emptyDir that gets the updated CA bundle
+    - name: ca-store
       emptyDir: {}
 
   extraVolumeMounts:
@@ -65,3 +65,4 @@ gitea:
           mountPath: /ca
         - name: ca-store
           mountPath: /usr/local/share/ca-certificates
+      resources: {}
