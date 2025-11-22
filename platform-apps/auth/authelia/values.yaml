@@ -194,7 +194,7 @@ authelia:
             consent: implicit
             pkce_challenge_method: ''
             redirect_uris:
-              - https://vcs-127-0-0-1.nip.io/user/oauth2/authelia/callback
+              - https://vcs-127-0-0-1.nip.io/user/oauth2/Authelia/callback
             scopes:
               - 'openid'
               - 'profile'
