@@ -10,14 +10,20 @@ gitea:
       - secretName: gitea-server-tls
         hosts:
           - vcs-127-0-0-1.nip.io
-  valkey-cluster:
-    enabled: false
-  valkey:
-    enabled: true
-  postgresql-ha:
-    enabled: false
-  postgresql:
-    enabled: true
+
+  # Gitea internal configuration
+  config:
+    server:
+      ROOT_CA: /etc/ssl/certs/ldp-ca.pem
+
+    # Optional but recommended to avoid internal IP redirects
+    service:
+      DISABLE_REGISTRATION: true
+
+    oauth2_client:
+      ENABLE_AUTO_REGISTRATION: true
+
+  # OIDC Login via Authelia
   gitea:
     oauth:
       - name: "Authelia"
@@ -30,3 +36,26 @@ gitea:
           - "profile"
           - "email"
           - "groups"
+
+  valkey-cluster:
+    enabled: false
+  valkey:
+    enabled: true
+
+  postgresql-ha:
+    enabled: false
+  postgresql:
+    enabled: true
+
+  # Mount CA certificate into container
+  extraVolumes:
+    - name: ca
+      configMap:
+        name: ca
+        defaultMode: 420
+
+  extraVolumeMounts:
+    - name: ca
+      mountPath: /etc/ssl/certs/ldp-ca.pem
+      subPath: trust-bundle.pem
+      readOnly: true
