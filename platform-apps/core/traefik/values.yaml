@@ -8,7 +8,6 @@ traefik:
       publishedService:
         enabled: true
 
-  # Deployment configuration
   deployment:
     kind: DaemonSet
 
@@ -17,41 +16,29 @@ traefik:
       defaultCertificate:
         secretName: default-tls
 
-  # Enable dashboard
   ingressRoute:
     dashboard:
       enabled: true
 
-  # Ports configuration
   ports:
     web:
-      port: 80
-      exposedPort: 80
       nodePort: 30080
     websecure:
-      port: 443
-      exposedPort: 443
       nodePort: 30443
     traefik:
-      port: 9000
-      exposedPort: 9000
       nodePort: 30900
 
-  # Service configuration
   service:
     type: NodePort
 
-  # Enable metrics
   metrics:
     prometheus:
       enabled: true
 
-  # Additional arguments
   additionalArguments:
     - --api.insecure=true
     - --log.level=INFO
 
-  # Node selector to ensure Traefik runs on control-plane
   nodeSelector:
     ingress-ready: "true"
   tolerations:
