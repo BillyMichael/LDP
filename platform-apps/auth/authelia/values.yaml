@@ -65,9 +65,7 @@ authelia:
         # Disable global consent
         authorization_policies:
           default:
-            authorize: true
-            consent:
-              enabled: false
+            default_policy: 'one_factor'
 
         jwks:
           - key_id: default
@@ -102,7 +100,7 @@ authelia:
             consent: pre-configured
             redirect_uris:
               - https://cd-127-0-0-1.nip.io/auth/callback
-            scopes: [openid, groups, email, code]
+            scopes: [openid, groups, email]
             grant_types: [authorization_code]
             response_types: [code]
             token_endpoint_auth_method: client_secret_basic
@@ -136,7 +134,7 @@ authelia:
             redirect_uris:
               - https://portal-127-0-0-1.nip.io/api/auth/oidc/handler/frame
               - https://portal-127-0-0-1.nip.io/api/auth/oidc/handler
-            scopes: [openid, profile, email]
+            scopes: [openid, profile, email, offline_access]
             grant_types: [authorization_code, refresh_token]
             response_types: [code]
             client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
