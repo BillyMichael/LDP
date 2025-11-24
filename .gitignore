@@ -1,1 +1,47 @@
-platform-apps/orchestration/argocd/charts/*.tgz
+# ----------------------------------
+# Helm chart artifacts
+# ----------------------------------
+*.tgz
+**/charts/*.tgz
+**/charts/Chart.lock
+**/tmpcharts/
+
+# Local values files that should not be committed
+**/values.local.yaml
+**/values.override.yaml
+**/*.local.yaml
+
+# Generated manifests (helm template output)
+generated/
+manifests/
+out/
+
+# ----------------------------------
+# Node / Backstage
+# ----------------------------------
+spotify-backstage/node_modules/
+spotify-backstage/.cache/
+spotify-backstage/build/
+spotify-backstage/dist/
+
+# If you run Backstage locally:
+.env
+*.env
+
+# ----------------------------------
+# kubeconfigs
+# ----------------------------------
+kubeconfig
+kubeconfig.*
+.kube/
+.kube-config
+
+# ----------------------------------
+# Editor / OS noise
+# ----------------------------------
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.tmp
+*.bak
