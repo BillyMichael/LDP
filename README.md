@@ -2,8 +2,6 @@
 
 This repository provides a reproducible **Internal Developer Platform** running entirely on a lightweight Kubernetes cluster (KIND). 
 
----
-
 ## ⭐ What This Repository Provides
 
 - A complete, local-first platform environment for demos and experimentation.
@@ -15,21 +13,18 @@ This repository provides a reproducible **Internal Developer Platform** running 
   - Gitea (Git Server)
   - Backstage Developer Portal
 
----
-
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- **Docker** (20.10+) or **Podman** - [Install Docker](https://docs.docker.com/get-docker/)
-- **kind** (0.20+) - `brew install kind` or see [kind installation](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
-- **kubectl** (1.27+) - [Install kubectl](https://kubernetes.io/docs/tasks/tools/)
-- **Helm** (3.12+) - [Install Helm](https://helm.sh/docs/intro/install/)
+- **Docker** or **Podman** - [Install Docker](https://docs.docker.com/get-docker/) or [Install Podman](https://podman.io/docs/installation) 
+- **kind** - [Install kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
+- **kubectl** - [Install kubectl](https://kubernetes.io/docs/tasks/tools/)
+- **Helm** - [Install Helm](https://helm.sh/docs/intro/install/)
 - **Make** - Usually pre-installed on macOS/Linux
 
 **System Requirements:**
-- 4GB+ RAM available for Docker
-- 20GB+ free disk space
+- 12GB+ RAM available for Docker
 
 ## 🚀 Getting Started
 
@@ -81,8 +76,6 @@ URLs:
 
 **Note:** You may see browser security warnings for self-signed certificates. This is expected in local development.
 
----
-
 ## 📁 Repository Structure
 
 ```
@@ -100,8 +93,6 @@ local-developer-platform/
 └── README.md                  
 ```
 
----
-
 ## 🧰 Useful Commands
 
 - **Create cluster:**  
@@ -116,8 +107,6 @@ local-developer-platform/
 - **Provide info about the cluster such as usernames and ingresses:**  
   `make info`
 
----
-
 ## 🤝 Contributing
 
 Contributions are welcome! This platform is designed for clarity, reproducibility, and experimentation.
@@ -128,13 +117,9 @@ To contribute:
 3. Test your changes with `make up` on a fresh cluster
 4. Submit a pull request with a clear description
 
----
-
 ## 📄 License
 
 MIT
-
----
 
 ## 🔧 Troubleshooting
 
