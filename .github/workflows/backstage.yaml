@@ -42,8 +42,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.REPO_LC }}:latest
-            ghcr.io/${{ env.REPO_LC }}:${{ github.sha }}
+            ghcr.io/${{ env.REPO }}:latest
+            ghcr.io/${{ env.REPO }}:${{ github.sha }}
 
       - name: Image digest
         run: echo "Image pushed with digest ${{ steps.build-and-push.outputs.digest }}"
