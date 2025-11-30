@@ -62,13 +62,6 @@ authelia:
       oidc:
         enabled: true
 
-        # Disable global consent
-        authorization_policies:
-          default:
-            authorize: true
-            consent:
-              enabled: false
-
         jwks:
           - key_id: default
             algorithm: RS256
@@ -99,10 +92,10 @@ authelia:
             client_name: Argo CD
             public: false
             authorization_policy: one_factor
-            consent: pre-configured
+            consent: implicit
             redirect_uris:
               - https://cd-127-0-0-1.nip.io/auth/callback
-            scopes: [openid, groups, email, code]
+            scopes: [openid, groups, email]
             grant_types: [authorization_code]
             response_types: [code]
             token_endpoint_auth_method: client_secret_basic
@@ -116,7 +109,7 @@ authelia:
             authorization_policy: one_factor
             require_pkce: true
             pkce_challenge_method: S256
-            consent: pre-configured
+            consent: implicit
             redirect_uris:
               - https://cd-127-0-0-1.nip.io/auth/callback
             scopes: [openid, offline_access, groups, email]
@@ -132,11 +125,11 @@ authelia:
             authorization_policy: one_factor
             require_pkce: true
             pkce_challenge_method: S256
-            consent: pre-configured
+            consent: implicit
             redirect_uris:
               - https://portal-127-0-0-1.nip.io/api/auth/oidc/handler/frame
               - https://portal-127-0-0-1.nip.io/api/auth/oidc/handler
-            scopes: [openid, profile, email]
+            scopes: [openid, profile, email, offline_access]
             grant_types: [authorization_code, refresh_token]
             response_types: [code]
             client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
@@ -145,7 +138,7 @@ authelia:
             client_name: Kargo
             public: true
             authorization_policy: one_factor
-            consent: pre-configured
+            consent: implicit
             redirect_uris:
               - https://kargo-127-0-0-1.nip.io/login
             scopes: [openid, profile, offline_access, groups, email]
@@ -159,7 +152,7 @@ authelia:
             client_name: Gitea
             public: false
             authorization_policy: one_factor
-            consent: pre-configured
+            consent: implicit
             redirect_uris:
               - https://vcs-127-0-0-1.nip.io/user/oauth2/Authelia/callback
             scopes: [openid, profile, email, groups]

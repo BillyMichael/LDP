@@ -2,7 +2,7 @@
 
 This repository provides a reproducible **Internal Developer Platform** running entirely on a lightweight Kubernetes cluster (KIND). 
 
-## ⭐ What This Repository Provides
+## What This Repository Provides
 
 - A complete, local-first platform environment for demos and experimentation.
 - GitOps  using **ArgoCD**.
@@ -13,7 +13,7 @@ This repository provides a reproducible **Internal Developer Platform** running 
   - Gitea (Git Server)
   - Backstage Developer Portal
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
@@ -26,7 +26,7 @@ Before you begin, ensure you have the following installed:
 **System Requirements:**
 - 12GB+ RAM available for Docker
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the repository
 
@@ -47,7 +47,7 @@ This command will:
 - Bootstrap all platform applications via GitOps
 - Takes approximately 5-10 minutes on first run
 
-## 🌐 Accessing Services
+## Accessing Services
 
 After setup completes, details on how to access services will be provided via the CLI.
 
@@ -76,7 +76,7 @@ URLs:
 
 **Note:** You may see browser security warnings for self-signed certificates. This is expected in local development.
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 local-developer-platform/
@@ -93,7 +93,7 @@ local-developer-platform/
 └── README.md                  
 ```
 
-## 🧰 Useful Commands
+## Useful Commands
 
 - **Create cluster:**  
   `make up`
@@ -107,7 +107,7 @@ local-developer-platform/
 - **Provide info about the cluster such as usernames and ingresses:**  
   `make info`
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! This platform is designed for clarity, reproducibility, and experimentation.
 
@@ -117,10 +117,10 @@ To contribute:
 3. Test your changes with `make up` on a fresh cluster
 4. Submit a pull request with a clear description
 
-## 📄 License
+## License
 
 MIT
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 WIP
