@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./spotify-backstage
-          file: ./packages/backend/Dockerfile
+          file: ./spotify-backstage/packages/backend/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ env.REPO }}:latest
