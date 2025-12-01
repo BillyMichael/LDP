@@ -1,0 +1,3 @@
+# app-config is managed via a configmap in kubernetes.
+# To modify the file please go to '.platform-apps/portal/backstage/templates/app-config.extra.yaml'
+# Changes will be applies automatically via argocd when pushed to main

@@ -1,3 +1,27 @@
-# app-config is managed via a configmap in kubernetes.
-# To modify the file please go to '.platform-apps/portal/backstage/templates/app-config.extra.yaml'
-# Changes will be applies automatically via argocd when pushed to main
+app:
+  title: Backstage | Local Developer Portal
+
+organization:
+  name: Local Developer Portal
+
+backend:
+  listen:
+    port: 7007
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  cache:
+    store: memory
+
+catalog:
+  useUrlReadersSearch: true
+  orphanStrategy: delete
+  processingInterval: { minutes: 5 }
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow: [Component, System, API, Resource, Location, Template, User, Group]
