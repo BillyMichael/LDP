@@ -20,6 +20,8 @@ data:
     auth:
       environment: production
       providers:
+         guest:
+          enabled: true
         oidc:
           production:
             metadataUrl: https://auth-127-0-0-1.nip.io/api/oidc/.well-known/openid-configuration
