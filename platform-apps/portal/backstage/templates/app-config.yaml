@@ -31,6 +31,15 @@ data:
                 - resolver: emailMatchingUserEntityProfileEmail
             tokenEndpointAuthMethod: client_secret_post
             scope: openid profile email
+    catalog:
+      useUrlReadersSearch: true
+      orphanStrategy: delete
+      processingInterval: { minutes: 5 }
+      import:
+        entityFilename: catalog-info.yaml
+        pullRequestBranchName: backstage-integration
+      rules:
+        - allow: [Component, System, API, Resource, Location, Template, User, Group]
     
     techdocs:
       builder: 'local'
