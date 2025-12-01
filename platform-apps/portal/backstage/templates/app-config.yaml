@@ -20,7 +20,7 @@ data:
     auth:
       environment: production
       providers:
-         guest:
+        guest:
           enabled: true
         oidc:
           production:
