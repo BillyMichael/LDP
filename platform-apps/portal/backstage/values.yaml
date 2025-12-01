@@ -10,6 +10,10 @@ backstage:
       enabled: true
       secretName: backstage-tls
   backstage:
+    image:
+      registry: ghcr.io
+      repository: billymichael/local-developer-platform
+      tag: latest
     extraAppConfig:
     - filename: app-config.extra.yaml
       configMapRef: extra-app-config
