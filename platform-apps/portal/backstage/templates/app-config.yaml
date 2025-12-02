@@ -16,6 +16,8 @@ data:
         origin: https://portal-127-0-0-1.nip.io
         methods: [GET, POST, PUT, DELETE]
         credentials: true
+      auth:
+        dangerouslyDisableDefaultAuthPolicy: true
 
     auth:
       environment: production
