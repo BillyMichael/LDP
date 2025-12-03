@@ -38,6 +38,9 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/
 import { NotificationsPage } from '@backstage/plugin-notifications';
 import { SignalsDisplay } from '@backstage/plugin-signals';
 
+import { oidcAuthApiRef } from './apis';
+
+
 const app = createApp({
   apis,
   bindRoutes({ bind }) {
@@ -58,7 +61,14 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => <SignInPage {...props} auto providers={['guest']} />,
+    SignInPage: props => (
+      <SignInPage {...props} auto provider={{ 
+        id: 'oidc', 
+        title: 'OIDC', 
+        message: 'Sign in with OIDC', 
+        apiRef: oidcAuthApiRef,
+      }} />
+    ),
   },
 });
 
