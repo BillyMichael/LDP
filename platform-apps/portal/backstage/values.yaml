@@ -17,3 +17,17 @@ backstage:
     extraAppConfig:
     - filename: app-config.extra.yaml
       configMapRef: extra-app-config
+    extraEnv:
+      - name: NODE_EXTRA_CA_CERTS
+        value: /etc/ssl/custom-ca/ca.crt
+        
+    extraVolumes:
+      - name: ca
+        configMap:
+          name: ca
+
+    extraVolumeMounts:
+      - name: ca
+        mountPath: /etc/ssl/certs/ldp-ca.pem
+        subPath: trust-bundle.pem
+        readOnly: true
