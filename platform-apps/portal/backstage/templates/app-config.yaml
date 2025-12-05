@@ -31,7 +31,7 @@ data:
             clientSecret: insecure_secret
             prompt: auto
             tokenEndpointAuthMethod: client_secret_post
-            scope: openid profile email
+            additionalScopes: openid profile email
     catalog:
       useUrlReadersSearch: true
       orphanStrategy: delete
