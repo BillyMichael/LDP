@@ -30,9 +30,6 @@ data:
             clientId: backstage-client
             clientSecret: insecure_secret
             prompt: auto
-            signIn:
-              resolvers:
-                - resolver: emailMatchingUserEntityProfileEmail
             tokenEndpointAuthMethod: client_secret_post
             scope: openid profile email
     catalog:
