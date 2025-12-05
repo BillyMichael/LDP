@@ -26,7 +26,7 @@ data:
           enabled: true
         oidc:
           production:
-            metadataUrl: https://auth-127-0-0-1.nip.io/api/oidc/.well-known/openid-configuration
+            metadataUrl: "https://auth-127-0-0-1.nip.io/.well-known/openid-configuration"
             clientId: backstage-client
             clientSecret: insecure_secret
             prompt: auto
