@@ -19,7 +19,7 @@ backstage:
       configMapRef: extra-app-config
     extraEnvVars:
       - name: NODE_EXTRA_CA_CERTS
-        value: /etc/ssl/custom-ca/ldp-ca.pem
+        value: /etc/ssl/certs/ldp-ca.pem
         
     extraVolumes:
       - name: ca
