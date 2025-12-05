@@ -10,6 +10,7 @@ source "${SCRIPT_DIR}/common.sh"
 # ============================================================================
 
 CLUSTER_NAME="${CLUSTER_NAME:-ldp}"
+CONTEXT_NAME="kind-${CLUSTER_NAME}"
 KIND_CFG="${KIND_CFG:-cluster/cluster-config.yaml}"
 ARGOCD_NS="${ARGOCD_NS:-orchestration}"
 ARGOCD_CHART_DIR="${CHART_DIR:-platform-apps/orchestration/argocd}"
@@ -82,6 +83,10 @@ else
     kind create cluster --name "$CLUSTER_NAME" --config "$KIND_CFG" --quiet
 fi
 
+# Set kubectl context to the Kind cluster for safety
+run_step "Setting kubectl context to '$CONTEXT_NAME'" \
+  kubectl config use-context "$CONTEXT_NAME"
+
 
 # ============================================================================
 # INSTALL ARGO CD
@@ -90,13 +95,14 @@ fi
 section "Installing Argo CD"
 
 run_step "Adding Argo CD Helm repository" \
-  helm repo add argo https://argoproj.github.io/argo-helm
+  helm repo add argo https://argoproj.github.io/argo-helm --kube-context "$CONTEXT_NAME"
 
 run_step "Updating Helm repositories" \
-  helm repo update
+  helm repo update --kube-context "$CONTEXT_NAME"
 
 run_step "Installing Argo CD (core chart)" \
   helm upgrade --install "$ARGOCD_RELEASE" argo/argo-cd \
+    --kube-context "$CONTEXT_NAME" \
     --namespace "$ARGOCD_NS" \
     --create-namespace \
     --wait \
@@ -104,6 +110,7 @@ run_step "Installing Argo CD (core chart)" \
 
 run_step "Migrating to custom Argo CD chart" \
   helm upgrade --install "$ARGOCD_RELEASE" "$ARGOCD_CHART_DIR" \
+    --kube-context "$CONTEXT_NAME" \
     --namespace "$ARGOCD_NS" \
     --wait \
     --dependency-update \
@@ -121,17 +128,17 @@ TRAEFIK_SVC="traefik"
 run_step "Waiting for Traefik service" \
   bash -c "
     for _ in {1..30}; do
-      kubectl -n '$TRAEFIK_NS' get service '$TRAEFIK_SVC' >/dev/null 2>&1 && exit 0
+      kubectl --context '$CONTEXT_NAME' -n '$TRAEFIK_NS' get service '$TRAEFIK_SVC' >/dev/null 2>&1 && exit 0
       sleep 2
     done
     exit 1
   "
 
-TRAEFIK_IP="$(kubectl -n "$TRAEFIK_NS" get service "$TRAEFIK_SVC" -o jsonpath='{.spec.clusterIP}')"
+TRAEFIK_IP="$(kubectl --context "$CONTEXT_NAME" -n "$TRAEFIK_NS" get service "$TRAEFIK_SVC" -o jsonpath='{.spec.clusterIP}')"
 
 run_step "Patching CoreDNS config" \
   bash -c "
-    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' |
+    kubectl --context '$CONTEXT_NAME' get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' |
       awk -v traefik_ip='$TRAEFIK_IP' '
         /^\.:[0-9]+ \{/ {
           print \$0
@@ -145,11 +152,11 @@ run_step "Patching CoreDNS config" \
         { print }
       ' > /tmp/coredns-corefile.txt
 
-    kubectl create configmap coredns --from-file=Corefile=/tmp/coredns-corefile.txt \
+    kubectl --context '$CONTEXT_NAME' create configmap coredns --from-file=Corefile=/tmp/coredns-corefile.txt \
       --dry-run=client -o yaml |
-      kubectl apply -n kube-system -f -
+      kubectl --context '$CONTEXT_NAME' apply -n kube-system -f -
 
-    kubectl rollout restart deployment/coredns -n kube-system
+    kubectl --context '$CONTEXT_NAME' rollout restart deployment/coredns -n kube-system
   "
 # ============================================================================
 # WAIT FOR LLDAP SECRETS
@@ -164,7 +171,7 @@ for SECRET in "${LLDAP_SECRETS[@]}"; do
   run_step "Waiting for '${SECRET}' credentials" \
     bash -c "
       for _ in {1..150}; do
-        kubectl -n '$LLDAP_NS' get secret 'lldap-${SECRET}-credentials' >/dev/null 2>&1 && exit 0
+        kubectl --context '$CONTEXT_NAME' -n '$LLDAP_NS' get secret 'lldap-${SECRET}-credentials' >/dev/null 2>&1 && exit 0
         sleep 2
       done
       exit 1
@@ -174,7 +181,7 @@ done
 run_step "Waiting for Authelia to be Ready" \
   bash -c "
     for _ in {1..150}; do
-      READY=\$(kubectl -n '$LLDAP_NS' get pods -l app.kubernetes.io/name=authelia \
+      READY=\$(kubectl --context '$CONTEXT_NAME' -n '$LLDAP_NS' get pods -l app.kubernetes.io/name=authelia \
         -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}' 2>/dev/null)
 
       if [[ \"\$READY\" =~ ^(True|true)$ ]]; then
