@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 
+CLUSTER_NAME="${CLUSTER_NAME:-ldp}"
+CONTEXT_NAME="kind-${CLUSTER_NAME}"
 LLDAP_NS="${LLDAP_NS:-auth}"
 
 # ============================================================================
@@ -23,8 +25,8 @@ get_secret_field() {
   local secret="$1"
   local field="$2"
 
-  if kubectl -n "$LLDAP_NS" get secret "$secret" >/dev/null 2>&1; then
-    kubectl -n "$LLDAP_NS" get secret "$secret" -o jsonpath="{.data.$field}" 2>/dev/null | base64 -d
+  if kubectl --context "$CONTEXT_NAME" -n "$LLDAP_NS" get secret "$secret" >/dev/null 2>&1; then
+    kubectl --context "$CONTEXT_NAME" -n "$LLDAP_NS" get secret "$secret" -o jsonpath="{.data.$field}" 2>/dev/null | base64 -d
   else
     printf "(not yet available)"
   fi
