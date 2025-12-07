@@ -33,19 +33,19 @@ if [[ "${KIND_EXPERIMENTAL_PROVIDER:-}" == "podman" ]]; then
     exit 1
   fi
 
+elif command -v podman >/dev/null 2>&1; then
+  ok "Using Podman"
+  CE="podman"
+  export KIND_EXPERIMENTAL_PROVIDER=podman
+
 elif command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
-  if docker info 2>/dev/null | grep -qi "docker desktop"; then
+  if [ "$(docker info --format '{{.OperatingSystem}}')" = "Docker Desktop" ]; then
     error "Docker Desktop detected — not supported. Use Podman or Docker Engine."
     exit 1
   fi
 
   ok "Using Docker Engine"
   CE="docker"
-
-elif command -v podman >/dev/null 2>&1; then
-  ok "Using Podman"
-  CE="podman"
-  export KIND_EXPERIMENTAL_PROVIDER=podman
 
 else
   error "No supported container engine found (need Docker Engine or Podman)."
