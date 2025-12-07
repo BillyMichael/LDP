@@ -46,6 +46,7 @@ jobs:
         with:
           context: ./spotify-backstage
           file: ./spotify-backstage/packages/backend/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/${{ env.REPO }}:latest
