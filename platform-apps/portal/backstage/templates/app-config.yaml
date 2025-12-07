@@ -41,6 +41,14 @@ data:
         pullRequestBranchName: backstage-integration
       rules:
         - allow: [Component, System, API, Resource, Location, Template, User, Group]
+      providers:
+        github:
+          ldp:
+            organization: local-developer-platform
+            catalogPath: '/**/catalog-info.yaml'
+            schedule:
+              frequency: { minutes: 30 }
+              timeout: { minutes: 3 }
     
     techdocs:
       builder: 'local'
