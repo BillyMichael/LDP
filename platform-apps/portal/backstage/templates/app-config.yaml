@@ -44,7 +44,7 @@ data:
       providers:
         github:
           ldp:
-            organization: local-developer-platform
+            organization: BillyMichael
             catalogPath: '/**/catalog-info.yaml'
             schedule:
               frequency: { minutes: 30 }
