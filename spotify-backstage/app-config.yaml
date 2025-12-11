@@ -15,13 +15,3 @@ backend:
     credentials: true
   cache:
     store: memory
-
-catalog:
-  useUrlReadersSearch: true
-  orphanStrategy: delete
-  processingInterval: { minutes: 5 }
-  import:
-    entityFilename: catalog-info.yaml
-    pullRequestBranchName: backstage-integration
-  rules:
-    - allow: [Component, System, API, Resource, Location, Template, User, Group]

@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: authelia
+  annotations:
+    terraform/organization: GLUK
+    terraform/workspaces: agora-apps
+  description: Open-source SSO and MFA gateway providing authentication and authorization.
+  links:
+    - url: https://auth-127-0-0-1.nip.io
+      title: Login
+spec:
+  type: website
+  lifecycle: production
+  owner: maintainers

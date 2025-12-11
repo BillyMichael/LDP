@@ -62,12 +62,16 @@ const app = createApp({
   },
   components: {
     SignInPage: props => (
-      <SignInPage {...props} auto provider={{ 
-        id: 'oidc', 
-        title: 'OIDC', 
-        message: 'Sign in with OIDC', 
-        apiRef: oidcAuthApiRef,
-      }} />
+      <SignInPage {...props} auto providers={[
+          'guest',
+          { 
+            id: 'oidc', 
+            title: 'OIDC', 
+            message: 'Sign in with OIDC', 
+            apiRef: oidcAuthApiRef,
+          }
+        ]} 
+      />
     ),
   },
 });
