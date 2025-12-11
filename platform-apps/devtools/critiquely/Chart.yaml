@@ -2,6 +2,6 @@ apiVersion: v2
 name: critiquely
 version: 1.0.0
 dependencies:
-  - name: Critiquely
-    version: 0.1.0
+  - name: critiquely
+    version: 0.1.1
     repository: https://critiquely.github.io/critiquely
