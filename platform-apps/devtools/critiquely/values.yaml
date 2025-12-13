@@ -1,0 +1,16 @@
+critiquely:
+  receiver:
+    ingress:
+      enabled: true
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        cert-manager.io/cluster-issuer: ca-issuer
+      hosts:
+        - host: critiquely-127-0-0-1.nip.io
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: critiquely-tls
+          hosts:
+            - critiquely-127-0-0-1.nip.io
