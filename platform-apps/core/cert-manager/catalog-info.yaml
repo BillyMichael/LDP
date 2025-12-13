@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cert-manager
+  description: Manages TLS certificates in Kubernetes.
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: maintainers
+  system: core

@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage
+  description: The developer portal.
+spec:
+  type: website
+  lifecycle: production
+  owner: maintainers
+  system: portal
+  dependsOn:
+    - component:default/traefik
+    - component:default/cert-manager
+    - component:default/trust-manager

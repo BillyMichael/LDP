@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gitea
+  description: A painless self-hosted Git service.
+spec:
+  type: website
+  lifecycle: production
+  owner: maintainers
+  system: vcs
+  dependsOn:
+    - component:default/traefik
+    - component:default/cert-manager
+    - component:default/trust-manager

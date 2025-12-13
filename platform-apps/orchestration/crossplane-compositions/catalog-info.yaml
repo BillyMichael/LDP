@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crossplane-compositions
+  description: Compositions for Crossplane.
+spec:
+  type: service
+  lifecycle: production
+  owner: maintainers
+  system: orchestration
+  dependsOn:
+    - component:default/crossplane

@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: minio
+  description: High Performance, S3 compatible object storage.
+spec:
+  type: object-storage
+  owner: maintainers
+  system: storage

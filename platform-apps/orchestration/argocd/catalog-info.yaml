@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: argocd
+  description: Declarative GitOps CD for Kubernetes.
+spec:
+  type: website
+  lifecycle: production
+  owner: maintainers
+  system: orchestration
+  dependsOn:
+    - component:default/traefik
+    - component:default/cert-manager

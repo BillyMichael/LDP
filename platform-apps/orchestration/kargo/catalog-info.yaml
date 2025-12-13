@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: kargo
+  description: A new way to do continuous delivery.
+spec:
+  type: website
+  lifecycle: production
+  owner: maintainers
+  system: orchestration
+  dependsOn:
+    - component:default/traefik
+    - component:default/cert-manager
+    - component:default/argocd

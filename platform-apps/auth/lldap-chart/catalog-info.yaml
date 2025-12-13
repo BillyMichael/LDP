@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: lldap
+  description: Lightweight LDAP server for authentication.
+spec:
+  type: service
+  lifecycle: production
+  owner: maintainers
+  system: auth
+  dependsOn:
+    - resource:default/external-secrets

@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: trust-manager
+  description: Manages trust bundles in Kubernetes.
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: maintainers
+  system: core
+  dependsOn:
+    - component:default/cert-manager
